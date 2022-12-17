@@ -6,6 +6,10 @@ import TapeType = require('./TapeType');
 import TapeValue = require('./TapeValue');
 
 export abstract class TapeGenerator {
+  public stack: TapeStatement[] | TapeDefinition[] = [];
+
+  //Invoke<T : 
+
   // Type
   abstract Type_Primitive(type: TapeType.Primitive): TapeCode;
   abstract Type_Array(type: TapeType.Array): TapeCode;
@@ -20,8 +24,13 @@ export abstract class TapeGenerator {
   
   // Definition
   abstract Variable(definition: TapeDefinition.Variable): TapeCode;
+  abstract Function(definition: TapeDefinition.Function): TapeCode;
 
   // Expression
   abstract ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode;
   abstract ExpressionPart_Compare(part: TapeExpression.Part.Compare): TapeCode;
+}
+
+export namespace TapeGenerator {
+
 }

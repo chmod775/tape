@@ -7,23 +7,42 @@ import TapeCode = require('./TapeCode');
 import { TapeGenerator } from './TapeGenerator'
 import TapeType = require('./TapeType');
 
-export abstract class Base {
-  abstract Generate(generator: TapeGenerator) : TapeCode;
+export class File {
+  public defs: TapeDefinition[] = [];
+
+  constructor(defs: TapeDefinition[]) {
+    this.defs = defs;
+  }
+
+  Generate(generator: TapeGenerator): TapeCode {
+    let ret = new TapeCode();
+    
+    for (let d of this.defs)
+      ret.AddCode(0, d.Generate(generator));
+
+    return ret;
+  }
 }
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
-  let ret = new TapeStatement.Block(defs);
-  return ret;
+  return new TapeStatement.Block(defs);
 }
 
 export function Variable(name: String, type: TapeType) : TapeDefinition.Variable {
-  let ret = new TapeDefinition.Variable(name, type);
-  return ret;
+  return new TapeDefinition.Variable(name, type);
 }
 
 export function If(condition: TapeExpression | TapeExpression, ifTrue: TapeStatement | TapeExpression) : TapeStatement.If {
-  let ret = new TapeStatement.If(condition, ifTrue);
-  return ret;
+  return new TapeStatement.If(condition, ifTrue);
+}
+
+export function Function(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Function {
+  return new TapeDefinition.Function(name, returnType, args);
+}
+export namespace Function {
+  export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
+    return new TapeDefinition.Function.Argument(name, type);
+  }
 }
 
 export class Value {

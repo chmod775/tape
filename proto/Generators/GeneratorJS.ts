@@ -7,7 +7,6 @@ import TapeType = require('../Core/TapeType');
 import TapeValue = require('../Core/TapeValue');
 
 export class GeneratorJS extends TapeGenerator {
-
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     throw new Error('Method not implemented.');
   }
@@ -22,7 +21,6 @@ export class GeneratorJS extends TapeGenerator {
     else
       return new TapeCode(value.value);
   }
-
   Array(value: TapeValue.Array): TapeCode {
     let line = '[';
 
@@ -50,7 +48,6 @@ export class GeneratorJS extends TapeGenerator {
 
     return ret;
   }
-  
   If(statement: TapeStatement.If): TapeCode {
     let ret = new TapeCode();
     
@@ -71,6 +68,19 @@ export class GeneratorJS extends TapeGenerator {
       line += ` = ${definition.init.Generate(this).Content()}`;
 
     return new TapeCode(line + ';');
+  }
+  Function(definition: TapeDefinition.Function): TapeCode {
+    let ret = new TapeCode();
+
+    let args = [];
+    for (let a of definition.arguments) {
+      args.push(`${a.name}`);
+    }
+
+    ret.AddString(0, `function ${definition.name}(${args.join(',')})`);
+    ret.AddCode(0, definition.content.Generate(this));
+
+    return ret;
   }
 
   ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode {
