@@ -35,7 +35,7 @@ export class GeneratorCS extends Tape.Generator {
   Block(statement: TapeStatement.Block): Tape.Code {
     let ret = new Tape.Code();
 
-    for (let i of statement.defs) {
+    for (let i of statement.items) {
       let iRet = i.Generate(this);
       ret.lines.push(...iRet.lines);
     }

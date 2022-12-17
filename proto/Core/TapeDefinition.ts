@@ -1,10 +1,10 @@
-import * as Tape from './Tape'
 import { TapeGenerator } from './TapeGenerator';
 import TapeType = require('./TapeType');
 import TapeValue = require('./TapeValue');
+import TapeCode = require('./TapeCode');
 
 abstract class TapeDefinition {
-  abstract Generate(generator: TapeGenerator) : Tape.Code;
+  abstract Generate(generator: TapeGenerator) : TapeCode;
 }
 
 namespace TapeDefinition {
@@ -25,7 +25,7 @@ namespace TapeDefinition {
       return this;
     }
   
-    Generate(generator: Tape.Generator): Tape.Code {
+    Generate(generator: TapeGenerator): TapeCode {
       return generator.Variable(this);
     }
   }

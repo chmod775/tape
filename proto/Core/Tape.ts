@@ -2,12 +2,13 @@ import TapeDefinition = require('./TapeDefinition');
 import TapeExpression = require('./TapeExpression');
 import TapeStatement = require('./TapeStatement');
 import TapeValue = require('./TapeValue');
+import TapeCode = require('./TapeCode');
 
 import { TapeGenerator } from './TapeGenerator'
 import TapeType = require('./TapeType');
 
 export abstract class Base {
-  abstract Generate(generator: TapeGenerator) : Code;
+  abstract Generate(generator: TapeGenerator) : TapeCode;
 }
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
@@ -20,22 +21,9 @@ export function Variable(name: String, type: TapeType) : TapeDefinition.Variable
   return ret;
 }
 
-export function If(condition: TapeExpression, def: TapeDefinition) : TapeStatement.If {
-  let ret = new TapeStatement.If(condition, def);
+export function If(condition: TapeExpression | TapeExpression, ifTrue: TapeStatement | TapeExpression) : TapeStatement.If {
+  let ret = new TapeStatement.If(condition, ifTrue);
   return ret;
-}
-
-export class Code {
-  lines: String[] = [];
-
-  constructor(singleLine?: String) {
-    if (singleLine != undefined)
-      this.lines.push(singleLine);
-  }
-
-  Content() {
-    return this.lines.join('\n');
-  }
 }
 
 export class Value {
@@ -62,3 +50,4 @@ export class Type {
 
 export { TapeExpression as Expression };
 export { TapeGenerator as Generator };
+export { TapeCode as Code };
