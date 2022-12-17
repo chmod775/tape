@@ -1,10 +1,10 @@
 import * as Tape from '../Core/Tape'
-import { Block, If } from '../Core/TapeStatement';
-import { Variable } from '../Core/TapeDefinition';
-import { Array, Literal } from '../Core/TapeValue';
+import TapeDefinition = require('../Core/TapeDefinition');
+import TapeStatement = require('../Core/TapeStatement');
+import TapeValue = require('../Core/TapeValue');
 
 export class GeneratorJS extends Tape.Generator {
-  Literal(value: Literal): Tape.Code {
+  Literal(value: TapeValue.Literal): Tape.Code {
     let isString = (typeof value.value === 'string' || value.value instanceof String);
     if (isString)
       return new Tape.Code(`"${value.value}"`);
@@ -12,7 +12,7 @@ export class GeneratorJS extends Tape.Generator {
       return new Tape.Code(value.value);
   }
 
-  Array(value: Array): Tape.Code {
+  Array(value: TapeValue.Array): Tape.Code {
     let line = '[';
 
     let items: String[] = [];
@@ -24,7 +24,7 @@ export class GeneratorJS extends Tape.Generator {
     return new Tape.Code(line);
   }
 
-  Block(statement: Block): Tape.Code {
+  Block(statement: TapeStatement.Block): Tape.Code {
     let ret = new Tape.Code();
 
     for (let i of statement.defs) {
@@ -35,11 +35,11 @@ export class GeneratorJS extends Tape.Generator {
     return ret;
   }
   
-  If(statement: If): Tape.Code {
+  If(statement: TapeStatement.If): Tape.Code {
     return new Tape.Code();
   }
 
-  Variable(definition: Variable): Tape.Code {
+  Variable(definition: TapeDefinition.Variable): Tape.Code {
     let line = `var ${definition.name}`;
     if (definition.init)
       line += ` = ${definition.init.Generate(this).Content()}`;

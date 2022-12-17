@@ -1,13 +1,17 @@
 import * as Tape from './Tape'
-import * as TapeValue from './TapeValue'
+import TapeValue = require('./TapeValue');
 
-export class Base {
+class TapeExpression {
 }
 
-export function Parse(expression: String) : Base {
-  return new Base();
+namespace TapeExpression {
+  export function Parse(expression: String) : TapeExpression {
+    return new TapeExpression();
+  }
+  
+  export function Assignment(target: TapeValue.Symbol, value: TapeValue) : TapeExpression {
+    return new TapeExpression();
+  }
 }
 
-export function Assignment(target: TapeValue.Symbol, value: TapeValue.Base) : Base {
-  return new Base();
-}
+export = TapeExpression;

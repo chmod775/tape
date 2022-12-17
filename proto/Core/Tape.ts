@@ -1,14 +1,15 @@
-import * as TapeDefinition from './TapeDefinition'
-import * as TapeExpression from './TapeExpression'
-import * as TapeStatement from './TapeStatement'
-import * as TapeValue from './TapeValue'
+import TapeDefinition = require('./TapeDefinition');
+import TapeExpression = require('./TapeExpression');
+import TapeStatement = require('./TapeStatement');
+import TapeValue = require('./TapeValue');
+
 import { TapeGenerator } from './TapeGenerator'
 
 export abstract class Base {
   abstract Generate(generator: TapeGenerator) : Code;
 }
 
-export function Block(defs: TapeStatement.Base[] | TapeDefinition.Base[]) : TapeStatement.Block {
+export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
   let ret = new TapeStatement.Block(defs);
   return ret;
 }
@@ -18,7 +19,7 @@ export function Variable(name: String, type: DataTypes) : TapeDefinition.Variabl
   return ret;
 }
 
-export function If(condition: TapeExpression.Base, def: TapeDefinition.Base) : TapeStatement.If {
+export function If(condition: TapeExpression, def: TapeDefinition) : TapeStatement.If {
   let ret = new TapeStatement.If(condition, def);
   return ret;
 }
@@ -45,7 +46,7 @@ export class Value {
     return new TapeValue.Literal(value);
   }
 
-  static Array(...values: TapeValue.Base[]) : TapeValue.Array {
+  static Array(...values: TapeValue[]) : TapeValue.Array {
     return new TapeValue.Array(...values);
   }
 }

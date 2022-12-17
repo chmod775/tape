@@ -1,8 +1,7 @@
 import * as Tape from './Tape'
-import * as TapeDefinition from './TapeDefinition'
-import * as TapeExpression from './TapeExpression'
-import * as TapeStatement from './TapeStatement'
-import * as TapeValue from './TapeValue'
+import TapeDefinition = require('./TapeDefinition');
+import TapeStatement = require('./TapeStatement');
+import TapeValue = require('./TapeValue');
 
 export abstract class TapeGenerator {
   abstract Literal(value: TapeValue.Literal): Tape.Code;

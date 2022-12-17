@@ -1,31 +1,33 @@
 import * as Tape from './Tape'
 import { TapeGenerator } from './TapeGenerator';
-import * as TapeValue from './TapeValue'
+import TapeValue = require('./TapeValue');
 
-export abstract class Base {
+abstract class TapeDefinition {
   abstract Generate(generator: TapeGenerator) : Tape.Code;
 }
 
-export class Variable extends Base {
-  public name: String;
-  public type: Tape.DataTypes;
-  public init?: TapeValue.Base;
-
-  constructor(name: String, type: Tape.DataTypes) {
-    super();
-
-    this.name = name;
-    this.type = type;
-  }
-
-  Initialize(value: TapeValue.Base) : Variable {
-    this.init = value;
-    return this;
-  }
-
-  Generate(generator: Tape.Generator): Tape.Code {
-    return generator.Variable(this);
+namespace TapeDefinition {
+  export class Variable extends TapeDefinition {
+    public name: String;
+    public type: Tape.DataTypes;
+    public init?: TapeValue;
+  
+    constructor(name: String, type: Tape.DataTypes) {
+      super();
+  
+      this.name = name;
+      this.type = type;
+    }
+  
+    Initialize(value: TapeValue) : Variable {
+      this.init = value;
+      return this;
+    }
+  
+    Generate(generator: Tape.Generator): Tape.Code {
+      return generator.Variable(this);
+    }
   }
 }
 
-
+export = TapeDefinition;
