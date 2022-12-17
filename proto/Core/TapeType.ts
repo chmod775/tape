@@ -7,31 +7,54 @@ abstract class TapeType {
 }
 
 namespace TapeType {
-  export class Primitive extends TapeType {
-    public value: any;
+  export enum _PrimitiveCodes {
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+    Float,
+    Double,
+    String
+  }
   
-    constructor(value: any) {
+  export class Primitive extends TapeType {
+    public code: _PrimitiveCodes;
+  
+    constructor(code: _PrimitiveCodes) {
       super();
-      this.value = value;
+      this.code = code;
     }
   
     Generate(generator: Tape.Generator): Tape.Code {
-      return generator.Literal(this);
+      return generator.Type_Primitive(this);
     }
   }
   
   export class Array extends TapeType {
-    public values: TapeType[];
+    public baseType: TapeType;
   
-    constructor(...values: TapeType[]) {
+    constructor(baseType: TapeType) {
       super();
-      this.values = values;
+      this.baseType = baseType;
     }
   
     Generate(generator: Tape.Generator): Tape.Code {
-      return generator.Array(this);
+      return generator.Type_Array(this);
     }
   }
+}
+
+
+namespace TapeType.Primitive {
+  export const Int8 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int8);
+  export const Int16 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int16);
+  export const Int32 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int32);
+  export const Int64 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int64);
+  export const Float = new TapeType.Primitive(TapeType._PrimitiveCodes.Float);
 }
 
 export = TapeType;

@@ -1,5 +1,6 @@
 import * as Tape from './Tape'
 import { TapeGenerator } from './TapeGenerator';
+import TapeType = require('./TapeType');
 import TapeValue = require('./TapeValue');
 
 abstract class TapeDefinition {
@@ -9,10 +10,10 @@ abstract class TapeDefinition {
 namespace TapeDefinition {
   export class Variable extends TapeDefinition {
     public name: String;
-    public type: Tape.DataTypes;
+    public type: TapeType;
     public init?: TapeValue;
   
-    constructor(name: String, type: Tape.DataTypes) {
+    constructor(name: String, type: TapeType) {
       super();
   
       this.name = name;

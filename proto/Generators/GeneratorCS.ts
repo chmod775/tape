@@ -4,12 +4,12 @@ import TapeStatement = require('../Core/TapeStatement');
 import TapeType = require('../Core/TapeType');
 import TapeValue = require('../Core/TapeValue');
 
-export class GeneratorJS extends Tape.Generator {
+export class GeneratorCS extends Tape.Generator {
   Type_Primitive(type: TapeType.Primitive): Tape.Code {
-    throw new Error('Method not implemented.');
+    return new Tape.Code(TapeType._PrimitiveCodes[type.code]);
   }
   Type_Array(type: TapeType.Array): Tape.Code {
-    throw new Error('Method not implemented.');
+    return new Tape.Code(`${type.baseType.Generate(this).Content()}[]`);
   }
   
   Literal(value: TapeValue.Literal): Tape.Code {
@@ -48,7 +48,7 @@ export class GeneratorJS extends Tape.Generator {
   }
 
   Variable(definition: TapeDefinition.Variable): Tape.Code {
-    let line = `var ${definition.name}`;
+    let line = `${definition.type.Generate(this).Content()} ${definition.name}`;
     if (definition.init)
       line += ` = ${definition.init.Generate(this).Content()}`;
 

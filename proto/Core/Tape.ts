@@ -4,6 +4,7 @@ import TapeStatement = require('./TapeStatement');
 import TapeValue = require('./TapeValue');
 
 import { TapeGenerator } from './TapeGenerator'
+import TapeType = require('./TapeType');
 
 export abstract class Base {
   abstract Generate(generator: TapeGenerator) : Code;
@@ -14,7 +15,7 @@ export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.
   return ret;
 }
 
-export function Variable(name: String, type: DataTypes) : TapeDefinition.Variable {
+export function Variable(name: String, type: TapeType) : TapeDefinition.Variable {
   let ret = new TapeDefinition.Variable(name, type);
   return ret;
 }
@@ -51,19 +52,13 @@ export class Value {
   }
 }
 
+export class Type {
+  static Primitive = TapeType.Primitive;
+  
+  static Array(baseType: TapeType) : TapeType.Array {
+    return new TapeType.Array(baseType);
+  }
+}
+
 export { TapeExpression as Expression };
 export { TapeGenerator as Generator };
-
-export enum DataTypes {
-  Int8,
-  Int16,
-  Int32,
-  Int64,
-  UInt8,
-  UInt16,
-  UInt32,
-  UInt64,
-  Float,
-  Double,
-  String
-}
