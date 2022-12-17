@@ -27,7 +27,7 @@ export class Code {
   lines: String[] = [];
 
   constructor(singleLine?: String) {
-    if (singleLine)
+    if (singleLine != undefined)
       this.lines.push(singleLine);
   }
 
@@ -43,6 +43,10 @@ export class Value {
 
   static Literal(value: any) : TapeValue.Literal {
     return new TapeValue.Literal(value);
+  }
+
+  static Array(...values: TapeValue.Base[]) : TapeValue.Array {
+    return new TapeValue.Array(...values);
   }
 }
 

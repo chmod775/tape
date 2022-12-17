@@ -3,7 +3,7 @@ import { Block, If } from '../Core/TapeStatement';
 import { Variable } from '../Core/TapeDefinition';
 import { Array, Literal } from '../Core/TapeValue';
 
-export class GeneratorJS extends Tape.Generator {
+export class GeneratorCS extends Tape.Generator {
   Literal(value: Literal): Tape.Code {
     let isString = (typeof value.value === 'string' || value.value instanceof String);
     if (isString)
@@ -40,10 +40,26 @@ export class GeneratorJS extends Tape.Generator {
   }
 
   Variable(definition: Variable): Tape.Code {
-    let line = `var ${definition.name}`;
+    let line = `${GeneratorCS.DataTypes[definition.type]} ${definition.name}`;
     if (definition.init)
       line += ` = ${definition.init.Generate(this).Content()}`;
 
     return new Tape.Code(line + ';');
+  }
+}
+
+export namespace GeneratorCS {
+  export enum DataTypes {
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+    float,
+    double,
+    string
   }
 }

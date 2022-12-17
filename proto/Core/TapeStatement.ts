@@ -3,7 +3,8 @@ import * as TapeDefinition from './TapeDefinition'
 import * as TapeExpression from './TapeExpression'
 import { TapeGenerator } from './TapeGenerator'
 
-export abstract class Base extends Tape.Base {
+export abstract class Base {
+  abstract Generate(generator: TapeGenerator) : Tape.Code;
 }
 
 export class Block extends Base {

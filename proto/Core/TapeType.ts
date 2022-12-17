@@ -6,20 +6,7 @@ export abstract class Base {
   abstract Generate(generator: TapeGenerator) : Tape.Code;
 }
 
-export class Symbol extends Base {
-  private name: String;
-
-  constructor(name: String) {
-    super();
-    this.name = name;
-  }
-
-  Generate(generator: Tape.Generator): Tape.Code {
-    return new Tape.Code(this.name);
-  }
-}
-
-export class Literal extends Base {
+export class Primitive extends Base {
   public value: any;
 
   constructor(value: any) {

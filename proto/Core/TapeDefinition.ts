@@ -2,7 +2,8 @@ import * as Tape from './Tape'
 import { TapeGenerator } from './TapeGenerator';
 import * as TapeValue from './TapeValue'
 
-export abstract class Base extends Tape.Base {
+export abstract class Base {
+  abstract Generate(generator: TapeGenerator) : Tape.Code;
 }
 
 export class Variable extends Base {
