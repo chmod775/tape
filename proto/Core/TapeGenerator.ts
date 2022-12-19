@@ -1,9 +1,9 @@
-import { TapeValue } from './TapeValue';
-import { TapeStatement } from './TapeStatement';
-import { TapeExpression } from './TapeExpression';
+import { TapeValue } from './Structure/TapeValue';
+import { TapeStatement } from './Structure/TapeStatement';
+import { TapeExpression } from './Structure/TapeExpression';
 import { TapeCode } from './TapeCode';
-import { TapeType } from './TapeType';
-import { TapeDefinition } from './TapeDefinition';
+import { TapeType } from './Structure/TapeType';
+import { TapeDefinition } from './Structure/TapeDefinition';
 
 export abstract class TapeGenerator {
   // Type

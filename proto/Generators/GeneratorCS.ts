@@ -1,10 +1,10 @@
 import { TapeGenerator } from '../Core/TapeGenerator';
-import { TapeValue } from '../Core/TapeValue';
-import { TapeStatement } from '../Core/TapeStatement';
-import { TapeExpression } from '../Core/TapeExpression';
+import { TapeValue } from '../Core/Structure/TapeValue';
+import { TapeStatement } from '../Core/Structure/TapeStatement';
+import { TapeExpression } from '../Core/Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
-import { TapeType } from '../Core/TapeType';
-import { TapeDefinition } from '../Core/TapeDefinition';
+import { TapeType } from '../Core/Structure/TapeType';
+import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 
 export class GeneratorCS extends TapeGenerator {
   Type_Primitive(type: TapeType.Primitive): TapeCode {

@@ -1,27 +1,36 @@
 import { TapeValue } from './TapeValue';
 import { TapeExpression } from './TapeExpression';
-import { TapeCode } from './TapeCode';
+import { TapeCode } from '../TapeCode';
 import { TapeType } from './TapeType';
 import { TapeDefinition } from './TapeDefinition';
-import { TapeGenerator } from './TapeGenerator';
-import { TapeScope } from './TapeScope';
+import { TapeGenerator } from '../TapeGenerator';
+import { TapeScope } from '../TapeScope';
+import { TapeStructure } from '../TapeStructure';
 
-abstract class TapeStatement {
-  abstract Generate(generator: TapeGenerator) : TapeCode;
+abstract class TapeStatement extends TapeStructure {
+  Substructure(): TapeStructure[] {
+    return [];
+  }
 }
 
 namespace TapeStatement {
   export class Block extends TapeStatement {
-    public scope: TapeScope;
-    public items: TapeStatement[] | TapeDefinition[];
+    public items: (TapeExpression | TapeStatement | TapeDefinition)[];
   
-    constructor(items: TapeStatement[] | TapeDefinition[]) {
+    constructor(items: (TapeExpression | TapeStatement | TapeDefinition)[]) {
       super();
-      let defs = items.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
-      this.scope = new TapeScope(defs);
       this.items = items;
     }
   
+    Substructure(): TapeStructure[] {
+      return this.items;
+    }
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      this.scope = new TapeScope(parentScope);
+      return [];
+    }
+
     Generate(generator: TapeGenerator): TapeCode {
       return generator.Block(this);
     }
@@ -32,6 +41,14 @@ namespace TapeStatement {
     public ifTrue: TapeStatement | TapeExpression;
     public ifFalse?: TapeStatement | TapeExpression = undefined;
   
+    Substructure(): TapeStructure[] {
+      return [
+        this.condition,
+        this.ifTrue,
+        this.ifFalse
+      ];
+    }
+
     constructor(condition: TapeExpression, ifTrue: TapeStatement | TapeExpression) {
       super();
   
@@ -44,7 +61,7 @@ namespace TapeStatement {
       this.ifFalse = (ifFalse instanceof TapeStatement.Block) ? ifFalse : new TapeStatement.Block([ifFalse]);
       return this;
     }
-  
+
     Generate(generator: TapeGenerator): TapeCode {
       return generator.If(this);
     }
@@ -52,6 +69,12 @@ namespace TapeStatement {
 
   export class Return extends TapeStatement {
     public expression: TapeExpression;
+
+    Substructure(): TapeStructure[] {
+      return [
+        this.expression
+      ];
+    }
 
     constructor(expression: TapeExpression) {
       super();

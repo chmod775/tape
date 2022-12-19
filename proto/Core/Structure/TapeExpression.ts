@@ -1,14 +1,21 @@
-import { TapeGenerator } from './TapeGenerator';
+import { TapeGenerator } from '../TapeGenerator';
 import { TapeValue } from './TapeValue';
-import { TapeCode } from './TapeCode';
+import { TapeCode } from '../TapeCode';
+import { TapeStructure } from '../TapeStructure';
+import { TapeScope } from '../TapeScope';
 
-class TapeExpression {
+class TapeExpression extends TapeStructure {
   part: TapeExpression.Part;
 
   constructor(part: TapeExpression.Part) {
+    super();
     this.part = part;
   }
 
+  Substructure(): TapeStructure[] {
+    return [];
+  }
+  
   Generate(generator: TapeGenerator) : TapeCode {
     return this.part.Generate(generator);
   }

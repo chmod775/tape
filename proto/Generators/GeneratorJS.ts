@@ -1,10 +1,10 @@
 import { TapeGenerator } from '../Core/TapeGenerator';
-import { TapeValue } from '../Core/TapeValue';
-import { TapeStatement } from '../Core/TapeStatement';
-import { TapeExpression } from '../Core/TapeExpression';
+import { TapeValue } from '../Core/Structure/TapeValue';
+import { TapeStatement } from '../Core/Structure/TapeStatement';
+import { TapeExpression } from '../Core/Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
-import { TapeType } from '../Core/TapeType';
-import { TapeDefinition } from '../Core/TapeDefinition';
+import { TapeType } from '../Core/Structure/TapeType';
+import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 
 export class GeneratorJS extends TapeGenerator {
   Type_Primitive(type: TapeType.Primitive): TapeCode {
@@ -85,7 +85,7 @@ export class GeneratorJS extends TapeGenerator {
       // Create __init method to call every constructor
       let initFnContent: TapeExpression[] = [];
       for (let f of initializedFields) {
-        initFnContent.push(new TapeExpression.Assignment())
+        initFnContent.push(TapeExpression.Assignment(new TapeValue.Symbol(`this.${f.name}`), f.init))
       }
 
       let initFn = new TapeDefinition.Function('__init').Content(initFnContent);

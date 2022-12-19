@@ -1,18 +1,25 @@
-import { TapeGenerator } from './TapeGenerator';
+import { TapeGenerator } from '../TapeGenerator';
 import { TapeValue } from './TapeValue';
 import { TapeStatement } from './TapeStatement';
 import { TapeExpression } from './TapeExpression';
-import { TapeCode } from './TapeCode';
+import { TapeCode } from '../TapeCode';
 import { TapeType } from './TapeType';
+import { TapeScope } from '../TapeScope';
+import { TapeStructure } from '../TapeStructure';
 
-abstract class TapeDefinition {
+abstract class TapeDefinition extends TapeStructure {
   public name: String;
   
   constructor(name: String) {
+    super();
     this.name = name;
   }
 
   abstract Generate(generator: TapeGenerator) : TapeCode;
+
+  Substructure(): TapeStructure[] {
+    return [];
+  }
 }
 
 namespace TapeDefinition {
@@ -39,12 +46,31 @@ namespace TapeDefinition {
     Generate(generator: TapeGenerator): TapeCode {
       return generator.Variable(this);
     }
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.Exists(this.name) || `Variable name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+      this.scope = parentScope;
+
+      return errors;
+    }
   }
 
   export class Function extends TapeDefinition {
     public returnType?: TapeType;
     public arguments: Function.Argument[] = [];
     public content?: TapeStatement.Block;
+
+    Substructure(): TapeStructure[] {
+      return [
+        this.returnType,
+        ...this.arguments,
+        this.content
+      ];
+    }
 
     constructor(name: String, returnType?: TapeType, args?: Function.Argument[]) {
       super(name);
@@ -57,9 +83,22 @@ namespace TapeDefinition {
       return this;
     }
 
-    Content(items: TapeExpression[] | TapeStatement[] | TapeDefinition[]): Function {
+    Content(items: (TapeExpression | TapeStatement | TapeDefinition)[]): Function {
       this.content = new TapeStatement.Block(items);
       return this;
+    }
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.Exists(this.name) || `Function name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+
+      let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+      this.scope = new TapeScope(parentScope, defs);
+
+      return errors;
     }
 
     Generate(generator: TapeGenerator): TapeCode {
@@ -67,13 +106,16 @@ namespace TapeDefinition {
     }
   }
   export namespace Function {
-    export class Argument {
-      public name: String;
+    export class Argument extends TapeDefinition {
       public type: TapeType;
 
       constructor(name: String, type: TapeType) {
-        this.name = name;
+        super(name);
         this.type = type;
+      }
+
+      Generate(generator: TapeGenerator): TapeCode {
+        throw new Error('Method not implemented.');
       }
     }
   }

@@ -1,27 +1,11 @@
 import { TapeGenerator } from '../Core/TapeGenerator';
-import { TapeValue } from '../Core/TapeValue';
-import { TapeStatement } from '../Core/TapeStatement';
-import { TapeExpression } from '../Core/TapeExpression';
+import { TapeValue } from './Structure/TapeValue';
+import { TapeStatement } from './Structure/TapeStatement';
+import { TapeExpression } from './Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
-import { TapeType } from '../Core/TapeType';
-import { TapeDefinition } from '../Core/TapeDefinition';
-
-export class File {
-  public defs: TapeDefinition[] = [];
-
-  constructor(defs: TapeDefinition[]) {
-    this.defs = defs;
-  }
-
-  Generate(generator: TapeGenerator): TapeCode {
-    let ret = new TapeCode();
-    
-    for (let d of this.defs)
-      ret.AddCode(0, d.Generate(generator));
-
-    return ret;
-  }
-}
+import { TapeType } from './Structure/TapeType';
+import { TapeDefinition } from './Structure/TapeDefinition';
+import { TapeFile } from './Structure/TapeFile';
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
   return new TapeStatement.Block(defs);
@@ -90,3 +74,4 @@ export class Type {
 export { TapeExpression as Expression };
 export { TapeGenerator as Generator };
 export { TapeCode as Code };
+export { TapeFile as File };

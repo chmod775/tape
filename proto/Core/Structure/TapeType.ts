@@ -1,9 +1,12 @@
-import { TapeGenerator } from './TapeGenerator'
-import { TapeCode } from './TapeCode'
+import { TapeGenerator } from '../TapeGenerator'
+import { TapeCode } from '../TapeCode'
+import { TapeStructure } from '../TapeStructure';
+import { TapeScope } from '../TapeScope';
 
-abstract class TapeType {
-  private _?: any;
-  abstract Generate(generator: TapeGenerator) : TapeCode;
+abstract class TapeType extends TapeStructure {
+  Substructure(): TapeStructure[] {
+    return [];
+  }
 }
 
 namespace TapeType {
