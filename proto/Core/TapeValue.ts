@@ -1,5 +1,6 @@
 import TapeCode = require('./TapeCode');
 import { TapeGenerator } from './TapeGenerator'
+import TapeType = require('./TapeType');
 
 abstract class TapeValue {
   private _?: any;
@@ -21,10 +22,12 @@ namespace TapeValue {
   }
   
   export class Literal extends TapeValue {
+    public baseType?: TapeType;
     public value: any;
   
-    constructor(value: any) {
+    constructor(baseType: TapeType, value: any) {
       super();
+      this.baseType = baseType;
       this.value = value;
     }
   
@@ -34,10 +37,12 @@ namespace TapeValue {
   }
   
   export class Array extends TapeValue {
+    public baseType?: TapeType;
     public values: TapeValue[];
   
-    constructor(...values: TapeValue[]) {
+    constructor(baseType: TapeType, ...values: TapeValue[]) {
       super();
+      this.baseType = baseType;
       this.values = values;
     }
   

@@ -3,6 +3,7 @@ import TapeType = require('./TapeType');
 import TapeValue = require('./TapeValue');
 import TapeCode = require('./TapeCode');
 import TapeStatement = require('./TapeStatement');
+import TapeExpression = require('./TapeExpression');
 
 abstract class TapeDefinition {
   abstract Generate(generator: TapeGenerator) : TapeCode;
@@ -12,7 +13,7 @@ namespace TapeDefinition {
   export class Variable extends TapeDefinition {
     public name: String;
     public type: TapeType;
-    public init?: TapeValue;
+    public init?: TapeExpression;
   
     constructor(name: String, type: TapeType) {
       super();
@@ -21,11 +22,17 @@ namespace TapeDefinition {
       this.type = type;
     }
   
-    Initialize(value: TapeValue) : Variable {
-      this.init = value;
+    InitializeWithValue(value: TapeValue.Literal | TapeValue.Array) : Variable {
+      value.baseType = this.type;
+      this.init = new TapeExpression(new TapeExpression.Part.Value(value));
       return this;
     }
   
+    InitializeWithExpression(value: TapeExpression) : Variable {
+      this.init = value;
+      return this;
+    }
+
     Generate(generator: TapeGenerator): TapeCode {
       return generator.Variable(this);
     }
@@ -58,7 +65,6 @@ namespace TapeDefinition {
       return generator.Function(this);
     }
   }
-
   export namespace Function {
     export class Argument {
       public name: String;
@@ -69,6 +75,17 @@ namespace TapeDefinition {
         this.type = type;
       }
     }
+  }
+
+  export class Method extends Function {
+
+  }
+
+  export class Class extends TapeDefinition {
+    Generate(generator: TapeGenerator): TapeCode {
+      throw new Error('Method not implemented.');
+    }
+
   }
 }
 

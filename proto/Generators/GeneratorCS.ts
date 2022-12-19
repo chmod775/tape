@@ -22,8 +22,7 @@ export class GeneratorCS extends TapeGenerator {
       return new TapeCode(value.value);
   }
   Array(value: TapeValue.Array): TapeCode {
-    let last = this.stack[this.stack.length - 1] as TapeDefinition.Variable;
-    let line = `new ${last.type.Generate(this).Content()}() {`;
+    let line = `new ${value.baseType.Generate(this).Content()}() {`;
 
     let items: String[] = [];
     for (var i of value.values)
@@ -64,12 +63,9 @@ export class GeneratorCS extends TapeGenerator {
   }
 
   Variable(definition: TapeDefinition.Variable): TapeCode {
-    this.stack.push(definition);
     let line = `${definition.type.Generate(this).Content()} ${definition.name}`;
     if (definition.init)
       line += ` = ${definition.init.Generate(this).Content()}`;
-
-    this.stack.pop();
     return new TapeCode(line + ';');
   }
   Function(definition: TapeDefinition.Function): TapeCode {
@@ -86,12 +82,22 @@ export class GeneratorCS extends TapeGenerator {
     return ret;
   }
 
+  ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode {
+    return new TapeCode(
+      `${part.value.Generate(this).Content()}`
+    );
+  }
   ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode {
     return new TapeCode(
       `${part.target.Generate(this).Content()} = ${part.value.Generate(this).Content()}`
     );
   }
-  ExpressionPart_Compare(part: TapeExpression.Part.Compare): TapeCode {
+  ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode {
+    return new TapeCode(
+      `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
+    );
+  }
+  ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
     return new TapeCode(
       `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
     );

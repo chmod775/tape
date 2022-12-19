@@ -3,12 +3,12 @@ import { GeneratorJS } from './Generators/GeneratorJS'
 import { GeneratorCS } from './Generators/GeneratorCS'
 
 let mainBlock = new Tape.File([
-  Tape.Variable('a', Tape.Type.Primitive.Int16).Initialize(Tape.Value.Literal('abc')),
-  Tape.Variable('b', Tape.Type.Array(Tape.Type.Primitive.Float)).Initialize(Tape.Value.Array(Tape.Value.Literal(0), Tape.Value.Literal(1), Tape.Value.Literal(2))),
+  Tape.Variable('a', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal('abc')),
+  Tape.Variable('b', Tape.Type.Array(Tape.Type.Primitive.Float)).InitializeWithValue(Tape.Value.Array(Tape.Value.Literal(0), Tape.Value.Literal(1), Tape.Value.Literal(2))),
 
-  Tape.Variable('c', Tape.Type.Array(Tape.Type.Primitive.Float)).Initialize(Tape.Value.Literal(10)),
+  Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithValue(Tape.Value.Literal(10)),
   Tape.If(
-    Tape.Expression.Compare(Tape.Value.Symbol('a'), Tape.Expression.CompareOperators.Less, Tape.Value.Symbol('b')),
+    Tape.Expression.Relational(Tape.Value.Symbol('a'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('b')),
     Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(10))
   )
   .Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
@@ -16,8 +16,12 @@ let mainBlock = new Tape.File([
   Tape.Function('foo')
       .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
       .Content([
-        Tape.Variable('c', Tape.Type.Array(Tape.Type.Primitive.Float)).Initialize(Tape.Value.Literal(10))
-      ])
+        Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
+          Tape.Value.Symbol('n1'),
+          Tape.Expression.BinaryOperators.Add,
+          Tape.Value.Symbol('n2')
+        ))
+      ]),
 ]);
 
 /*

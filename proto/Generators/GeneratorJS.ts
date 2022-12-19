@@ -83,12 +83,22 @@ export class GeneratorJS extends TapeGenerator {
     return ret;
   }
 
+  ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode {
+    return new TapeCode(
+      `${part.value.Generate(this).Content()}`
+    );
+  }
   ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode {
     return new TapeCode(
       `${part.target.Generate(this).Content()} = ${part.value.Generate(this).Content()}`
     );
   }
-  ExpressionPart_Compare(part: TapeExpression.Part.Compare): TapeCode {
+  ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode {
+    return new TapeCode(
+      `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
+    );
+  }
+  ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
     return new TapeCode(
       `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
     );

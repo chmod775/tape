@@ -51,11 +51,11 @@ export class Value {
   }
 
   static Literal(value: any) : TapeValue.Literal {
-    return new TapeValue.Literal(value);
+    return new TapeValue.Literal(null, value);
   }
 
   static Array(...values: TapeValue[]) : TapeValue.Array {
-    return new TapeValue.Array(...values);
+    return new TapeValue.Array(null, ...values);
   }
 }
 

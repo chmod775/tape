@@ -20,12 +20,25 @@ namespace TapeExpression {
   }
 
   export namespace Part {
-    export class Compare extends Part {
+    export class Value extends Part {
+      value: TapeValue;
+
+      constructor(value: TapeValue) {
+        super();
+        this.value = value;
+      }
+
+      Generate(generator: TapeGenerator): TapeCode {
+        return generator.ExpressionPart_Value(this);
+      }
+    }
+
+    export class Binary extends Part {
       left: TapeValue;
-      operator: CompareOperators;
+      operator: BinaryOperators;
       right: TapeValue;
 
-      constructor(left: TapeValue, operator: CompareOperators, right: TapeValue) {
+      constructor(left: TapeValue, operator: BinaryOperators, right: TapeValue) {
         super();
         this.left = left;
         this.operator = operator;
@@ -33,7 +46,24 @@ namespace TapeExpression {
       }
 
       Generate(generator: TapeGenerator): TapeCode {
-        return generator.ExpressionPart_Compare(this);
+        return generator.ExpressionPart_Binary(this);
+      }
+    }
+
+    export class Relational extends Part {
+      left: TapeValue;
+      operator: RelationalOperators;
+      right: TapeValue;
+
+      constructor(left: TapeValue, operator: RelationalOperators, right: TapeValue) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+      }
+
+      Generate(generator: TapeGenerator): TapeCode {
+        return generator.ExpressionPart_Relational(this);
       }
     }
 
@@ -53,7 +83,7 @@ namespace TapeExpression {
     }
   }
 
-  export enum CompareOperators {
+  export enum RelationalOperators {
     Equal = '==',
     NotEqual = '!=',
     Less = '<',
@@ -62,13 +92,27 @@ namespace TapeExpression {
     GreatEqua = '>='
   }
 
+  export enum BinaryOperators {
+    Add = '+',
+    Subtract = '-',
+    Multuply = '*',
+    Divide = '/',
+    Modulo = '%'
+  }
+
   export function Parse(expression: String) : TapeExpression {
     return undefined;
   }
 
-  export function Compare(left: TapeValue, operator: CompareOperators, right: TapeValue) : TapeExpression {
+  export function Binary(left: TapeValue, operator: BinaryOperators, right: TapeValue) : TapeExpression {
     return new TapeExpression(
-      new Part.Compare(left, operator, right)
+      new Part.Binary(left, operator, right)
+    );
+  }
+
+  export function Relational(left: TapeValue, operator: RelationalOperators, right: TapeValue) : TapeExpression {
+    return new TapeExpression(
+      new Part.Relational(left, operator, right)
     );
   }
 
