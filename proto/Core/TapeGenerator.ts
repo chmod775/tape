@@ -17,10 +17,12 @@ export abstract class TapeGenerator {
   // Statement
   abstract Block(statement: TapeStatement.Block): TapeCode;
   abstract If(statement: TapeStatement.If): TapeCode;
+  abstract Return(part: TapeStatement.Return): TapeCode;
   
   // Definition
   abstract Variable(definition: TapeDefinition.Variable): TapeCode;
   abstract Function(definition: TapeDefinition.Function): TapeCode;
+  abstract Class(definition: TapeDefinition.Class): TapeCode;
 
   // Expression
   abstract ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode;

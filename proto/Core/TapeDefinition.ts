@@ -7,6 +7,11 @@ import { TapeType } from './TapeType';
 
 abstract class TapeDefinition {
   public name: String;
+  
+  constructor(name: String) {
+    this.name = name;
+  }
+
   abstract Generate(generator: TapeGenerator) : TapeCode;
 }
 
@@ -16,9 +21,7 @@ namespace TapeDefinition {
     public init?: TapeExpression;
   
     constructor(name: String, type: TapeType) {
-      super();
-  
-      this.name = name;
+      super(name);
       this.type = type;
     }
   
@@ -44,8 +47,7 @@ namespace TapeDefinition {
     public content?: TapeStatement.Block;
 
     constructor(name: String, returnType?: TapeType, args?: Function.Argument[]) {
-      super();
-      this.name = name;
+      super(name);
       this.returnType = returnType;
       this.arguments = args ?? [];
     }
@@ -55,7 +57,7 @@ namespace TapeDefinition {
       return this;
     }
 
-    Content(items: TapeStatement[] | TapeDefinition[]): Function {
+    Content(items: TapeExpression[] | TapeStatement[] | TapeDefinition[]): Function {
       this.content = new TapeStatement.Block(items);
       return this;
     }
@@ -80,9 +82,37 @@ namespace TapeDefinition {
 
   }
 
+  export class Field extends Variable {
+  }
+
   export class Class extends TapeDefinition {
+    public parent?: Class;
+    public fields: Field[] = [];
+    public constructors: Method[] = [];
+    public methods: Method[] = [];
+
+    constructor(name: String, parent?: Class) {
+      super(name);
+      this.parent = parent;
+    }
+
+    Constructors(constructors: Method[]): Class {
+      this.constructors = constructors;
+      return this;
+    }
+
+    Fields(fields: Field[]): Class {
+      this.fields = fields;
+      return this;
+    }
+
+    Methods(methods: Method[]): Class {
+      this.methods = methods;
+      return this;
+    }
+
     Generate(generator: TapeGenerator): TapeCode {
-      throw new Error('Method not implemented.');
+      return generator.Class(this);
     }
 
   }

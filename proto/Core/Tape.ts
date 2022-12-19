@@ -31,8 +31,12 @@ export function Variable(name: String, type: TapeType) : TapeDefinition.Variable
   return new TapeDefinition.Variable(name, type);
 }
 
-export function If(condition: TapeExpression | TapeExpression, ifTrue: TapeStatement | TapeExpression) : TapeStatement.If {
+export function If(condition: TapeExpression, ifTrue: TapeStatement | TapeExpression) : TapeStatement.If {
   return new TapeStatement.If(condition, ifTrue);
+}
+
+export function Return(expression: TapeExpression) : TapeStatement.Return {
+  return new TapeStatement.Return(expression);
 }
 
 export function Function(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Function {
@@ -41,6 +45,23 @@ export function Function(name: String, returnType?: TapeType, args?: TapeDefinit
 export namespace Function {
   export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
     return new TapeDefinition.Function.Argument(name, type);
+  }
+}
+
+export function Class(name: String, parent?: TapeDefinition.Class) {
+  return new TapeDefinition.Class(name, parent);
+}
+export namespace Class {
+  export function Field(name: String, type: TapeType) : TapeDefinition.Field {
+    return new TapeDefinition.Field(name, type);
+  }
+  export function Method(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Method {
+    return new TapeDefinition.Method(name, returnType, args);
+  }
+  export namespace Method {
+    export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
+      return new TapeDefinition.Function.Argument(name, type);
+    }
   }
 }
 

@@ -61,6 +61,9 @@ export class GeneratorCS extends TapeGenerator {
 
     return ret;
   }
+  Return(part: TapeStatement.Return): TapeCode {
+    return new TapeCode(`return ${part.expression.Generate(this).Content()};`);
+  }
 
   Variable(definition: TapeDefinition.Variable): TapeCode {
     let line = `${definition.type.Generate(this).Content()} ${definition.name}`;
@@ -78,6 +81,34 @@ export class GeneratorCS extends TapeGenerator {
 
     ret.AddString(0, `${definition.returnType ? definition.returnType.Generate(this).Content() : 'void'} ${definition.name}(${args.join(',')})`);
     ret.AddCode(0, definition.content.Generate(this));
+
+    return ret;
+  }
+  Class(definition: TapeDefinition.Class): TapeCode {
+    let ret = new TapeCode();
+
+    ret.AddString(0, `class ${definition.name} {`);
+
+    for (let f of definition.fields) {
+      let line = `${f.type.Generate(this).Content()} ${f.name}`;
+      if (f.init)
+        line += ` = ${f.init.Generate(this).Content()}`;
+      ret.AddString(1, line + ';');
+    }
+
+    for (let c of definition.constructors) {
+      let args = c.arguments.map(a => a.name);
+      ret.AddString(1, `${c.name}(${args.join(',')})`)
+      ret.AddCode(1, c.content.Generate(this));
+    }
+
+    for (let m of definition.methods) {
+      let args = m.arguments.map(a => a.name);
+      ret.AddString(1, `${m.returnType ? m.returnType.Generate(this).Content() : 'void'} ${m.name}(${args.join(',')})`)
+      ret.AddCode(1, m.content.Generate(this));
+    }
+
+    ret.AddString(0, `}`);
 
     return ret;
   }

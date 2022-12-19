@@ -49,6 +49,19 @@ namespace TapeStatement {
       return generator.If(this);
     }
   }
+
+  export class Return extends TapeStatement {
+    public expression: TapeExpression;
+
+    constructor(expression: TapeExpression) {
+      super();
+      this.expression = expression;
+    }
+
+    Generate(generator: TapeGenerator): TapeCode {
+      return generator.Return(this);
+    }
+  }
 }
 
 export { TapeStatement as TapeStatement };

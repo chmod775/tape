@@ -121,6 +121,12 @@ namespace TapeExpression {
       new Part.Assign(target, value)
     );
   }
+
+  export function Value(value: TapeValue) : TapeExpression {
+    return new TapeExpression(
+      new Part.Value(value)
+    );
+  }
 }
 
 export { TapeExpression as TapeExpression };
