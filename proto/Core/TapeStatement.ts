@@ -1,7 +1,10 @@
-import TapeCode = require('./TapeCode');
-import TapeDefinition = require('./TapeDefinition');
-import TapeExpression = require('./TapeExpression');
-import { TapeGenerator } from './TapeGenerator'
+import { TapeValue } from './TapeValue';
+import { TapeExpression } from './TapeExpression';
+import { TapeCode } from './TapeCode';
+import { TapeType } from './TapeType';
+import { TapeDefinition } from './TapeDefinition';
+import { TapeGenerator } from './TapeGenerator';
+import { TapeScope } from './TapeScope';
 
 abstract class TapeStatement {
   abstract Generate(generator: TapeGenerator) : TapeCode;
@@ -9,10 +12,13 @@ abstract class TapeStatement {
 
 namespace TapeStatement {
   export class Block extends TapeStatement {
+    public scope: TapeScope;
     public items: TapeStatement[] | TapeDefinition[];
   
     constructor(items: TapeStatement[] | TapeDefinition[]) {
       super();
+      let defs = items.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+      this.scope = new TapeScope(defs);
       this.items = items;
     }
   
@@ -30,12 +36,12 @@ namespace TapeStatement {
       super();
   
       this.condition = condition;
-      this.ifTrue = ifTrue;
+      this.ifTrue = (ifTrue instanceof TapeStatement.Block) ? ifTrue : new TapeStatement.Block([ifTrue]);
     }
   
     Else(ifFalse: TapeStatement | TapeExpression) : If {
       if (this.ifFalse != undefined) throw 'Else already defined for If';
-      this.ifFalse = ifFalse;
+      this.ifFalse = (ifFalse instanceof TapeStatement.Block) ? ifFalse : new TapeStatement.Block([ifFalse]);
       return this;
     }
   
@@ -45,4 +51,4 @@ namespace TapeStatement {
   }
 }
 
-export = TapeStatement;
+export { TapeStatement as TapeStatement };

@@ -1,6 +1,6 @@
-import TapeCode = require('./TapeCode');
 import { TapeGenerator } from './TapeGenerator';
-import TapeValue = require('./TapeValue');
+import { TapeValue } from './TapeValue';
+import { TapeCode } from './TapeCode';
 
 class TapeExpression {
   part: TapeExpression.Part;
@@ -123,4 +123,4 @@ namespace TapeExpression {
   }
 }
 
-export = TapeExpression;
+export { TapeExpression as TapeExpression };

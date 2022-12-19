@@ -1,9 +1,9 @@
-import TapeCode = require('./TapeCode');
-import TapeDefinition = require('./TapeDefinition');
-import TapeExpression = require('./TapeExpression');
-import TapeStatement = require('./TapeStatement');
-import TapeType = require('./TapeType');
-import TapeValue = require('./TapeValue');
+import { TapeValue } from './TapeValue';
+import { TapeStatement } from './TapeStatement';
+import { TapeExpression } from './TapeExpression';
+import { TapeCode } from './TapeCode';
+import { TapeType } from './TapeType';
+import { TapeDefinition } from './TapeDefinition';
 
 export abstract class TapeGenerator {
   // Type

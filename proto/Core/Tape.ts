@@ -1,11 +1,10 @@
-import TapeDefinition = require('./TapeDefinition');
-import TapeExpression = require('./TapeExpression');
-import TapeStatement = require('./TapeStatement');
-import TapeValue = require('./TapeValue');
-import TapeCode = require('./TapeCode');
-
-import { TapeGenerator } from './TapeGenerator'
-import TapeType = require('./TapeType');
+import { TapeGenerator } from '../Core/TapeGenerator';
+import { TapeValue } from '../Core/TapeValue';
+import { TapeStatement } from '../Core/TapeStatement';
+import { TapeExpression } from '../Core/TapeExpression';
+import { TapeCode } from '../Core/TapeCode';
+import { TapeType } from '../Core/TapeType';
+import { TapeDefinition } from '../Core/TapeDefinition';
 
 export class File {
   public defs: TapeDefinition[] = [];

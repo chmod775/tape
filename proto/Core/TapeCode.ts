@@ -37,4 +37,4 @@ namespace Code {
   }
 }
 
-export = Code;
+export { Code as TapeCode };

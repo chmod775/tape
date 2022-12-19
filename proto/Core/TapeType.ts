@@ -1,5 +1,5 @@
-import TapeCode = require('./TapeCode');
 import { TapeGenerator } from './TapeGenerator'
+import { TapeCode } from './TapeCode'
 
 abstract class TapeType {
   private _?: any;
@@ -57,4 +57,4 @@ namespace TapeType.Primitive {
   export const Float = new TapeType.Primitive(TapeType._PrimitiveCodes.Float);
 }
 
-export = TapeType;
+export { TapeType as TapeType };

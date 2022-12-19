@@ -1,6 +1,6 @@
-import TapeCode = require('./TapeCode');
 import { TapeGenerator } from './TapeGenerator'
-import TapeType = require('./TapeType');
+import { TapeCode } from './TapeCode'
+import { TapeType } from './TapeType'
 
 abstract class TapeValue {
   private _?: any;
@@ -52,4 +52,4 @@ namespace TapeValue {
   }
 }
 
-export = TapeValue;
+export { TapeValue as TapeValue };

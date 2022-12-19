@@ -1,10 +1,10 @@
-import TapeCode = require('../Core/TapeCode');
-import TapeDefinition = require('../Core/TapeDefinition');
-import TapeExpression = require('../Core/TapeExpression');
 import { TapeGenerator } from '../Core/TapeGenerator';
-import TapeStatement = require('../Core/TapeStatement');
-import TapeType = require('../Core/TapeType');
-import TapeValue = require('../Core/TapeValue');
+import { TapeValue } from '../Core/TapeValue';
+import { TapeStatement } from '../Core/TapeStatement';
+import { TapeExpression } from '../Core/TapeExpression';
+import { TapeCode } from '../Core/TapeCode';
+import { TapeType } from '../Core/TapeType';
+import { TapeDefinition } from '../Core/TapeDefinition';
 
 export class GeneratorJS extends TapeGenerator {
   Type_Primitive(type: TapeType.Primitive): TapeCode {

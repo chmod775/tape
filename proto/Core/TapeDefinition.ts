@@ -1,17 +1,17 @@
 import { TapeGenerator } from './TapeGenerator';
-import TapeType = require('./TapeType');
-import TapeValue = require('./TapeValue');
-import TapeCode = require('./TapeCode');
-import TapeStatement = require('./TapeStatement');
-import TapeExpression = require('./TapeExpression');
+import { TapeValue } from './TapeValue';
+import { TapeStatement } from './TapeStatement';
+import { TapeExpression } from './TapeExpression';
+import { TapeCode } from './TapeCode';
+import { TapeType } from './TapeType';
 
 abstract class TapeDefinition {
+  public name: String;
   abstract Generate(generator: TapeGenerator) : TapeCode;
 }
 
 namespace TapeDefinition {
   export class Variable extends TapeDefinition {
-    public name: String;
     public type: TapeType;
     public init?: TapeExpression;
   
@@ -39,7 +39,6 @@ namespace TapeDefinition {
   }
 
   export class Function extends TapeDefinition {
-    public name: String;
     public returnType?: TapeType;
     public arguments: Function.Argument[] = [];
     public content?: TapeStatement.Block;
@@ -89,4 +88,4 @@ namespace TapeDefinition {
   }
 }
 
-export = TapeDefinition;
+export { TapeDefinition as TapeDefinition };

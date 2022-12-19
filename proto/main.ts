@@ -7,15 +7,15 @@ let mainBlock = new Tape.File([
   Tape.Variable('b', Tape.Type.Array(Tape.Type.Primitive.Float)).InitializeWithValue(Tape.Value.Array(Tape.Value.Literal(0), Tape.Value.Literal(1), Tape.Value.Literal(2))),
 
   Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithValue(Tape.Value.Literal(10)),
-  Tape.If(
-    Tape.Expression.Relational(Tape.Value.Symbol('a'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('b')),
-    Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(10))
-  )
-  .Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
 
   Tape.Function('foo')
       .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
       .Content([
+        Tape.If(
+          Tape.Expression.Relational(Tape.Value.Symbol('a'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('b')),
+          Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(10))
+        )
+        .Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
         Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
           Tape.Value.Symbol('n1'),
           Tape.Expression.BinaryOperators.Add,
