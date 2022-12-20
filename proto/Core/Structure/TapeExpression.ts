@@ -13,7 +13,7 @@ class TapeExpression extends TapeStructure {
   }
 
   Substructure(): TapeStructure[] {
-    return [];
+    return [ this.part ];
   }
   
   Generate(generator: TapeGenerator) : TapeCode {
@@ -22,13 +22,18 @@ class TapeExpression extends TapeStructure {
 }
 
 namespace TapeExpression {
-  export abstract class Part {
-    abstract Generate(generator: TapeGenerator) : TapeCode;
+  export abstract class Part extends TapeStructure {
   }
 
   export namespace Part {
     export class Value extends Part {
       value: TapeValue;
+
+      Substructure(): TapeStructure[] {
+        return [
+          this.value
+        ];
+      }
 
       constructor(value: TapeValue) {
         super();
@@ -44,6 +49,13 @@ namespace TapeExpression {
       left: TapeValue;
       operator: BinaryOperators;
       right: TapeValue;
+
+      Substructure(): TapeStructure[] {
+        return [
+          this.left,
+          this.right
+        ];
+      }
 
       constructor(left: TapeValue, operator: BinaryOperators, right: TapeValue) {
         super();
@@ -62,6 +74,13 @@ namespace TapeExpression {
       operator: RelationalOperators;
       right: TapeValue;
 
+      Substructure(): TapeStructure[] {
+        return [
+          this.left,
+          this.right
+        ];
+      }
+
       constructor(left: TapeValue, operator: RelationalOperators, right: TapeValue) {
         super();
         this.left = left;
@@ -77,6 +96,13 @@ namespace TapeExpression {
     export class Assign extends Part {
       target: TapeValue.Symbol;
       value: TapeValue;
+
+      Substructure(): TapeStructure[] {
+        return [
+          this.target,
+          this.value
+        ];
+      }
 
       constructor(target: TapeValue.Symbol, value: TapeValue) {
         super();

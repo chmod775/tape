@@ -19,9 +19,13 @@ abstract class TapeStructure {
     return ret;
   }
 
+  Validate(): (Boolean | String)[] {
+    return [];
+  }
+
   Create(parentScope: TapeScope): (Boolean | String)[] {
     this.scope = parentScope;
-    return [];
+    return this.Validate();
   }
 
   CreateStructure(): (Boolean | String)[] {

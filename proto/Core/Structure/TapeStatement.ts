@@ -27,7 +27,7 @@ namespace TapeStatement {
     }
 
     Create(parentScope: TapeScope): (Boolean | String)[] {
-      this.scope = new TapeScope(parentScope);
+      this.scope = new TapeScope(this, parentScope);
       return [];
     }
 

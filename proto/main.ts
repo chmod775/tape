@@ -11,7 +11,7 @@ let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
   Tape.If(
     Tape.Expression.Relational(Tape.Value.Symbol('n1'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('n2')),
     Tape.Block([
-      Tape.Expression.Assignment(Tape.Value.Symbol('t'), Tape.Value.Symbol('n1')),
+      Tape.Expression.Assignment(Tape.Value.Symbol('c'), Tape.Value.Symbol('n1')),
       Tape.Expression.Assignment(Tape.Value.Symbol('n1'), Tape.Value.Symbol('n2')),
       Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
     ])
@@ -45,7 +45,7 @@ let mainBlock = new Tape.File([
       ])
 ]);
 
-let rootScope = new TapeScope();
+let rootScope = new TapeScope(null);
 let errors = mainBlock.$Create(rootScope);
 console.log(errors);
 

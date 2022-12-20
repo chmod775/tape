@@ -3,6 +3,7 @@ import { TapeCode } from '../TapeCode'
 import { TapeType } from './TapeType'
 import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
+import { TapeDefinition } from './TapeDefinition';
 
 abstract class TapeValue extends TapeStructure {
   Substructure(): TapeStructure[] {
@@ -19,6 +20,12 @@ namespace TapeValue {
       this.name = name;
     }
   
+    Validate(): (String | Boolean)[] {
+      return [
+        this.scope.Exists(this.name) || `Symbol ${this.name} not defined.`,
+      ];
+    }
+
     Generate(generator: TapeGenerator): TapeCode {
       return new TapeCode(this.name);
     }

@@ -96,7 +96,7 @@ namespace TapeDefinition {
       parentScope.Add(this);
 
       let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
-      this.scope = new TapeScope(parentScope, defs);
+      this.scope = new TapeScope(this, parentScope, defs);
 
       return errors;
     }
@@ -133,9 +133,30 @@ namespace TapeDefinition {
     public constructors: Method[] = [];
     public methods: Method[] = [];
 
+    Substructure(): TapeStructure[] {
+      return [
+        ...this.fields,
+        ...this.constructors,
+        ...this.methods
+      ];
+    }
+
     constructor(name: String, parent?: Class) {
       super(name);
       this.parent = parent;
+    }
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.Exists(this.name) || `Class name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+
+      let defs = this.fields.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+      this.scope = new TapeScope(this, parentScope, defs);
+
+      return errors;
     }
 
     Constructors(constructors: Method[]): Class {
