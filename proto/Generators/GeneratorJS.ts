@@ -36,7 +36,7 @@ export class GeneratorJS extends TapeGenerator {
   Block(statement: TapeStatement.Block): TapeCode {
     let ret = new TapeCode(statement);
 
-    ret.AddString(0, '{');
+    ret.AddContent(0, '{');
 
     for (let i of statement.items) {
       let iRet = i.Generate(this);
@@ -44,33 +44,36 @@ export class GeneratorJS extends TapeGenerator {
       ret.AddCode(1, iRet);
     }
 
-    ret.AddString(0, '}');
+    ret.AddContent(0, '}');
 
     return ret;
   }
   If(statement: TapeStatement.If): TapeCode {
     let ret = new TapeCode(statement);
     
-    ret.AddString(0, `if (${statement.condition.Generate(this).Content()})`);
+    ret.AddContent(0, 'if ($0)', statement.condition.Generate(this));
     ret.AddCode(0, statement.ifTrue.Generate(this));
 
     if (statement.ifFalse) {
-      ret.AddString(0, `else`);
+      ret.AddContent(0, 'else');
       ret.AddCode(0, statement.ifFalse.Generate(this));
     }
 
     return ret;
   }
   Return(part: TapeStatement.Return): TapeCode {
-    return new TapeCode(part, `return ${part.expression.Generate(this).Content()};`);
+    let ret = new TapeCode(part);
+    ret.AddContent(0, 'return $0;', part.expression.Generate(this));
+    return ret;
   }
 
   Variable(definition: TapeDefinition.Variable): TapeCode {
-    let line = `var ${definition.name}`;
+    let ret = new TapeCode(definition);
     if (definition.init)
-      line += ` = ${definition.init.Generate(this).Content()}`;
-
-    return new TapeCode(definition, line + ';');
+      ret.AddContent(0, 'var ${definition.name} = $0;', definition.init.Generate(this));
+    else
+      ret.AddContent(0, 'var ${definition.name};');
+    return ret;
   }
   Function(definition: TapeDefinition.Function): TapeCode {
     return GeneratorJS.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
@@ -78,7 +81,10 @@ export class GeneratorJS extends TapeGenerator {
   Class(definition: TapeDefinition.Class): TapeCode {
     let ret = new TapeCode(definition);
 
-    ret.AddString(0, `class ${definition.name} {`);
+    ret.AddContent(0, `class ${definition.name} {`);
+
+    for (let f of definition.fields)
+      ret.AddContent(1, '', f.Generate(this));
 
     let initializedFields = definition.fields.filter(f => f.init);
     if (initializedFields.length > 0) {
@@ -104,7 +110,7 @@ export class GeneratorJS extends TapeGenerator {
     for (let m of definition.methods)
       ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, m, { isMethod: true, isConstructor: false }));
 
-    ret.AddString(0, `}`);
+    ret.AddContent(0, '}');
 
     return ret;
   }
