@@ -16,10 +16,6 @@ abstract class TapeDefinition extends TapeStructure {
   }
 
   abstract Generate(generator: TapeGenerator) : TapeCode;
-
-  Substructure(): TapeStructure[] {
-    return [];
-  }
 }
 
 namespace TapeDefinition {
@@ -64,14 +60,6 @@ namespace TapeDefinition {
     public arguments: Function.Argument[] = [];
     public content?: TapeStatement.Block;
 
-    Substructure(): TapeStructure[] {
-      return [
-        this.returnType,
-        ...this.arguments,
-        this.content
-      ];
-    }
-
     constructor(name: String, returnType?: TapeType, args?: Function.Argument[]) {
       super(name);
       this.returnType = returnType;
@@ -115,7 +103,7 @@ namespace TapeDefinition {
       }
 
       Generate(generator: TapeGenerator): TapeCode {
-        throw new Error('Method not implemented.');
+        return generator.FunctionArgument(this);
       }
     }
   }
@@ -157,14 +145,6 @@ namespace TapeDefinition {
     public fields: Field[] = [];
     public constructors: Method[] = [];
     public methods: Method[] = [];
-
-    Substructure(): TapeStructure[] {
-      return [
-        ...this.fields,
-        ...this.constructors,
-        ...this.methods
-      ];
-    }
 
     constructor(name: String, parent?: Class) {
       super(name);

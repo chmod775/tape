@@ -3,6 +3,7 @@ import { TapeValue } from './TapeValue';
 import { TapeCode } from '../TapeCode';
 import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
+import { TapeDefinition } from './TapeDefinition';
 
 class TapeExpression extends TapeStructure {
   part: TapeExpression.Part;
@@ -10,10 +11,6 @@ class TapeExpression extends TapeStructure {
   constructor(part: TapeExpression.Part) {
     super();
     this.part = part;
-  }
-
-  Substructure(): TapeStructure[] {
-    return [ this.part ];
   }
   
   Generate(generator: TapeGenerator) : TapeCode {
@@ -29,12 +26,6 @@ namespace TapeExpression {
     export class Value extends Part {
       value: TapeValue;
 
-      Substructure(): TapeStructure[] {
-        return [
-          this.value
-        ];
-      }
-
       constructor(value: TapeValue) {
         super();
         this.value = value;
@@ -49,13 +40,6 @@ namespace TapeExpression {
       left: TapeValue;
       operator: BinaryOperators;
       right: TapeValue;
-
-      Substructure(): TapeStructure[] {
-        return [
-          this.left,
-          this.right
-        ];
-      }
 
       constructor(left: TapeValue, operator: BinaryOperators, right: TapeValue) {
         super();
@@ -74,13 +58,6 @@ namespace TapeExpression {
       operator: RelationalOperators;
       right: TapeValue;
 
-      Substructure(): TapeStructure[] {
-        return [
-          this.left,
-          this.right
-        ];
-      }
-
       constructor(left: TapeValue, operator: RelationalOperators, right: TapeValue) {
         super();
         this.left = left;
@@ -96,13 +73,6 @@ namespace TapeExpression {
     export class Assign extends Part {
       target: TapeValue.Symbol;
       value: TapeValue;
-
-      Substructure(): TapeStructure[] {
-        return [
-          this.target,
-          this.value
-        ];
-      }
 
       constructor(target: TapeValue.Symbol, value: TapeValue) {
         super();
@@ -135,6 +105,12 @@ namespace TapeExpression {
 
   export function Parse(expression: String) : TapeExpression {
     return undefined;
+  }
+
+  export function Empty(part: TapeExpression.Part): TapeExpression {
+    return new TapeExpression(
+      part
+    );
   }
 
   export function Binary(left: TapeValue, operator: BinaryOperators, right: TapeValue) : TapeExpression {

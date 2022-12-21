@@ -50,6 +50,10 @@ export namespace Class {
 }
 
 export class Value {
+  static This() : TapeValue.This {
+    return new TapeValue.This();
+  }
+
   static Symbol(name: String) : TapeValue.Symbol {
     return new TapeValue.Symbol(name);
   }

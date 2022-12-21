@@ -11,6 +11,8 @@ export abstract class TapeGenerator {
   abstract Type_Array(type: TapeType.Array): TapeCode;
 
   // Value
+  abstract This(part: TapeValue.This): TapeCode;
+  abstract Symbol(part: TapeValue.Symbol): TapeCode;
   abstract Literal(value: TapeValue.Literal): TapeCode;
   abstract Array(value: TapeValue.Array): TapeCode;
 
@@ -21,7 +23,10 @@ export abstract class TapeGenerator {
   
   // Definition
   abstract Variable(definition: TapeDefinition.Variable): TapeCode;
+  
   abstract Function(definition: TapeDefinition.Function): TapeCode;
+  abstract FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode;
+
   abstract Class(definition: TapeDefinition.Class): TapeCode;
 
   // Expression

@@ -6,28 +6,61 @@ import { TapeScope } from '../TapeScope';
 import { TapeDefinition } from './TapeDefinition';
 
 abstract class TapeValue extends TapeStructure {
-  Substructure(): TapeStructure[] {
-    return [];
-  }
 }
 
 namespace TapeValue {
-  export class Symbol extends TapeValue {
-    private name: String;
-  
-    constructor(name: String) {
+  export class This extends TapeValue {
+    constructor() {
       super();
-      this.name = name;
     }
-  
-    Validate(): (String | Boolean)[] {
-      return [
-        this.scope.Exists(this.name) || `Symbol ${this.name} not defined.`,
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
       ];
+  
+      this.scope = parentScope.GetBackward(TapeDefinition.Class);
+
+      return errors;
     }
 
     Generate(generator: TapeGenerator): TapeCode {
-      return new TapeCode(this, this.name);
+      return generator.This(this);
+    }
+
+    Access(name: String): Symbol {
+      return new Symbol(name, this);
+    }
+  }
+
+  export class Symbol extends TapeValue {
+    public source?: This | Symbol;
+    public name: String;
+  
+    constructor(name: String, source?: This | Symbol) {
+      super();
+      this.name = name;
+      this.source = source;
+    }
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        parentScope.Exists(this.name) || `Symbol ${this.name} not defined.`,
+      ];
+
+      var oSource = parentScope.Find(this.name);
+      if (oSource)
+        this.scope = oSource.scope;
+      console.log(this.scope);
+
+      return errors;
+    }
+
+    Generate(generator: TapeGenerator): TapeCode {
+      return generator.Symbol(this);
+    }
+
+    Access(name: String): Symbol {
+      return new Symbol(name, this);
     }
   }
   

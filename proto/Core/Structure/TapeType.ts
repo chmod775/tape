@@ -4,9 +4,6 @@ import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
 
 abstract class TapeType extends TapeStructure {
-  Substructure(): TapeStructure[] {
-    return [];
-  }
 }
 
 namespace TapeType {

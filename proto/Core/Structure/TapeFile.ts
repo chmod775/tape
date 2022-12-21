@@ -11,10 +11,6 @@ class TapeFile extends TapeStructure {
     this.defs = defs;
   }
 
-  Substructure(): TapeStructure[] {
-    return this.defs;
-  }
-
   Generate(generator: TapeGenerator): TapeCode {
     let ret = new TapeCode(this);
     

@@ -5,26 +5,17 @@ class Code {
   source: TapeStructure;
   lines: Code.Line[] = [];
 
-  constructor(source: TapeStructure, content?: String | Code, indent: Number = 0) {
+  constructor(source: TapeStructure, content?: Code | Code.Content, indent: Number = 0) {
     this.source = source;
     if (content != undefined) {
       if (content instanceof Code)
         this.AddCode(indent, content as Code);
-      else if (content instanceof Code.Content)
-        this.AddContent(indent, content.template, ...content.placeholders);
       else
-        this.AddString(indent, content as String);
+        this.AddContent(indent, content.template, ...content.placeholders);
     }
   }
 
-  AddString(indent: Number, ...lines: String[]): void {
-    for (let l of lines) {
-      let content = new Code.Content(l);
-      this.lines.push(new Code.Line(content, indent));
-    }
-  }
-
-  AddContent(indent: Number, template: String, ...placeholders: Code[]) {
+  AddContent(indent: Number, template: String, ...placeholders: (Code | Code[])[]) {
     let content = new Code.Content(template, placeholders);
     this.lines.push(new Code.Line(content, indent));
   }
@@ -54,26 +45,38 @@ class Code {
 namespace Code {
   export class Content {
     template: String;
-    placeholders: Code[] = [];
+    placeholders: (Code | Code[])[] = [];
 
-    constructor(template: String, placeholders: Code[] = []) {
+    constructor(template: String, placeholders: (Code | Code[])[] = []) {
       this.template = template;
       this.placeholders = placeholders;
     }
 
     Content(): String {
-      let ret = this.template;
+      let reg : RegExp = /\$(\D*)(\d+)/g;
+      let ret = this.template.replace(reg, (substring: string, ...args: any[]): string => {
+        let separator = args[0];
+        let index = args[1];
 
-      for (let pIdx in this.placeholders)
-        ret = ret.replace(`\$${pIdx}`, this.placeholders[pIdx].Content() as string);
+        let isJoined = separator.length > 0;
+        if (isJoined)
+          return (this.placeholders[index] as Code[]).map(p => p.Content()).join(separator) as string;
 
+        return (this.placeholders[index] as Code).Content() as string
+      });
       return ret;
     }
 
     Create(parentScope: TapeScope): (Boolean | String)[] {
       let ret: (Boolean | String)[] = [];
-      for (let p of this.placeholders)
-        ret.push(...p.Create(parentScope));
+      for (let p of this.placeholders) {
+        if (p instanceof Code)
+          ret.push(...p.Create(parentScope));
+        else {
+          for (let sp of (p as Code[]))
+            ret.push(...sp.Create(parentScope));
+        }
+      }
       return ret;
     }
   }

@@ -53,6 +53,9 @@ let mainBlock = new Tape.File([
               Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
             ])
           ),
+
+          Tape.Expression.Assignment(Tape.Value.This().Access('cv').Access('t'), Tape.Value.This().Access('cv').Access('t')),
+
           //.Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
           Tape.Variable('ret', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
             Tape.Value.Symbol('n1'),

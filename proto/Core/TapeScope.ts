@@ -17,24 +17,34 @@ class TapeScope {
     this.defs[def.name as string] = def;
   }
 
-  ExistsLocal(name: String): Boolean {
-    return this.Exists(name, true);
+  GetBackward(type: typeof TapeDefinition): TapeScope {
+    if (this.owner instanceof type) return this;
+    if (!this.parent) return null;
+    return this.parent.GetBackward(type);
   }
 
-  Exists(name: String, onlyLocal: Boolean = false, stop: (typeof TapeDefinition)[] = []): Boolean {
-    let exists = (name as string) in this.defs;
-    if (exists) return exists;
+  Find(name: String, onlyLocal: Boolean = false, stop: (typeof TapeDefinition)[] = []): TapeDefinition {
+    let found = this.defs[name as string];
+    if (found) return found;
 
     if (this.parent) {
       let stopped = stop ? stop.filter(t => this.parent.owner instanceof t) : [];
       
       if ((stopped.length == 0) && !onlyLocal) {
-        let existsInParent = this.parent.Exists(name, onlyLocal, stop);
-        if (existsInParent) return existsInParent;  
+        let foundInParent = this.parent.Find(name, onlyLocal, stop);
+        if (foundInParent) return foundInParent;
       }
     }
 
-    return false;
+    return null;
+  }
+
+  ExistsLocal(name: String): Boolean {
+    return this.Exists(name, true);
+  }
+
+  Exists(name: String, onlyLocal: Boolean = false, stop: (typeof TapeDefinition)[] = []): Boolean {
+    return !!this.Find(name, onlyLocal, stop);
   }
 }
 

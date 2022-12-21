@@ -8,9 +8,6 @@ import { TapeScope } from '../TapeScope';
 import { TapeStructure } from '../TapeStructure';
 
 abstract class TapeStatement extends TapeStructure {
-  Substructure(): TapeStructure[] {
-    return [];
-  }
 }
 
 namespace TapeStatement {
@@ -22,9 +19,6 @@ namespace TapeStatement {
       this.items = items;
     }
   
-    Substructure(): TapeStructure[] {
-      return this.items;
-    }
 
     Create(parentScope: TapeScope): (Boolean | String)[] {
       this.scope = new TapeScope(this, parentScope);
@@ -40,14 +34,7 @@ namespace TapeStatement {
     public condition: TapeExpression;
     public ifTrue: TapeStatement | TapeExpression;
     public ifFalse?: TapeStatement | TapeExpression = undefined;
-  
-    Substructure(): TapeStructure[] {
-      return [
-        this.condition,
-        this.ifTrue,
-        this.ifFalse
-      ];
-    }
+
 
     constructor(condition: TapeExpression, ifTrue: TapeStatement | TapeExpression) {
       super();
@@ -69,12 +56,6 @@ namespace TapeStatement {
 
   export class Return extends TapeStatement {
     public expression: TapeExpression;
-
-    Substructure(): TapeStructure[] {
-      return [
-        this.expression
-      ];
-    }
 
     constructor(expression: TapeExpression) {
       super();
