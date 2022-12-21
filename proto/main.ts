@@ -11,7 +11,7 @@ let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
   Tape.If(
     Tape.Expression.Relational(Tape.Value.Symbol('n1'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('n2')),
     Tape.Block([
-      Tape.Expression.Assignment(Tape.Value.Symbol('c'), Tape.Value.Symbol('n1')),
+      Tape.Expression.Assignment(Tape.Value.Symbol('t'), Tape.Value.Symbol('n1')),
       Tape.Expression.Assignment(Tape.Value.Symbol('n1'), Tape.Value.Symbol('n2')),
       Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
     ])
@@ -38,17 +38,36 @@ let mainBlock = new Tape.File([
 
   Tape.Class('car')
       .Fields([ 
-        Tape.Class.Field('length', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0))
+        Tape.Class.Field('cv', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0))
       ])
       .Methods([
-        fn
+        Tape.Class.Method('foo', Tape.Type.Primitive.Float)
+        .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
+        .Content([
+          Tape.Variable('t', Tape.Type.Primitive.Float),
+          Tape.If(
+            Tape.Expression.Relational(Tape.Value.Symbol('n1'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('n2')),
+            Tape.Block([
+              Tape.Expression.Assignment(Tape.Value.Symbol('c'), Tape.Value.Symbol('n1')),
+              Tape.Expression.Assignment(Tape.Value.Symbol('n1'), Tape.Value.Symbol('n2')),
+              Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
+            ])
+          ),
+          //.Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
+          Tape.Variable('ret', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
+            Tape.Value.Symbol('n1'),
+            Tape.Expression.BinaryOperators.Add,
+            Tape.Value.Symbol('n2')
+          )),
+          Tape.Return(TapeExpression.Value(Tape.Value.Symbol('ret')))
+        ])
       ])
 ]);
-
+/*
 let rootScope = new TapeScope(null);
 let errors = mainBlock.$Create(rootScope);
-console.log(errors);
-
+console.error(errors.filter(e => e != true));
+*/
 /*
 let vars: Variable[] = [];
 for (var i = 0; i < 100; i++)
@@ -58,10 +77,19 @@ for (var i = 0; i < 100; i++)
 let mainBlock = Tape.Block(vars);
 */
 
-let genOutJS = mainBlock.Generate(new GeneratorJS());
+let genJs = new GeneratorJS();
+
+let genOutJS = mainBlock.Generate(genJs);
 console.log('##### JS #####');
 console.log(genOutJS.Content());
 console.log('\n');
+
+let rootScope = new TapeScope(null);
+let errors = genOutJS.Create(rootScope);
+console.error(errors.filter(e => e != true));
+
+//console.log(genOutJS.lines[5].code.lines[1].code.lines[1].code.lines[1]);
+
 /*
 let genOutCS = mainBlock.Generate(new GeneratorCS());
 console.log('##### C# #####');

@@ -27,7 +27,7 @@ namespace TapeValue {
     }
 
     Generate(generator: TapeGenerator): TapeCode {
-      return new TapeCode(this.name);
+      return new TapeCode(this, this.name);
     }
   }
   

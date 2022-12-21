@@ -32,15 +32,15 @@ namespace TapeDefinition {
       this.type = type;
     }
   
-    InitializeWithValue(value: TapeValue.Literal | TapeValue.Array) : Variable {
+    InitializeWithValue<T extends this>(value: TapeValue.Literal | TapeValue.Array) : T {
       value.baseType = this.type;
       this.init = new TapeExpression(new TapeExpression.Part.Value(value));
-      return this;
+      return this as T;
     }
   
-    InitializeWithExpression(value: TapeExpression) : Variable {
+    InitializeWithExpression<T extends this>(value: TapeExpression) : T {
       this.init = value;
-      return this;
+      return this as T;
     }
 
     Generate(generator: TapeGenerator): TapeCode {
@@ -78,14 +78,14 @@ namespace TapeDefinition {
       this.arguments = args ?? [];
     }
 
-    Arguments(...args: Function.Argument[]): Function {
+    Arguments<T extends this>(...args: Function.Argument[]): T {
       this.arguments.push(...args);
-      return this;
+      return this as T;
     }
 
-    Content(items: (TapeExpression | TapeStatement | TapeDefinition)[]): Function {
+    Content<T extends this>(items: (TapeExpression | TapeStatement | TapeDefinition)[]): T {
       this.content = new TapeStatement.Block(items);
-      return this;
+      return this as T;
     }
 
     Create(parentScope: TapeScope): (Boolean | String)[] {
@@ -121,10 +121,35 @@ namespace TapeDefinition {
   }
 
   export class Method extends Function {
+    public owner: Class;
 
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.ExistsLocal(this.name) || `Method name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+
+      let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+      this.scope = new TapeScope(this, parentScope, defs);
+
+      return errors;
+    }
   }
 
   export class Field extends Variable {
+    public owner: Class;
+
+    Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.ExistsLocal(this.name) || `Field name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+      this.scope = parentScope;
+
+      return errors;
+    }
   }
 
   export class Class extends TapeDefinition {
@@ -153,8 +178,7 @@ namespace TapeDefinition {
 
       parentScope.Add(this);
 
-      let defs = this.fields.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
-      this.scope = new TapeScope(this, parentScope, defs);
+      this.scope = new TapeScope(this, parentScope);
 
       return errors;
     }

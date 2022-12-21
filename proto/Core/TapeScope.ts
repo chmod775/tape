@@ -17,15 +17,19 @@ class TapeScope {
     this.defs[def.name as string] = def;
   }
 
-  Exists(name: String, stop: (typeof TapeDefinition)[] = []): Boolean {
+  ExistsLocal(name: String): Boolean {
+    return this.Exists(name, true);
+  }
+
+  Exists(name: String, onlyLocal: Boolean = false, stop: (typeof TapeDefinition)[] = []): Boolean {
     let exists = (name as string) in this.defs;
     if (exists) return exists;
 
     if (this.parent) {
       let stopped = stop ? stop.filter(t => this.parent.owner instanceof t) : [];
       
-      if (stopped.length == 0) {
-        let existsInParent = this.parent.Exists(name, stop);
+      if ((stopped.length == 0) && !onlyLocal) {
+        let existsInParent = this.parent.Exists(name, onlyLocal, stop);
         if (existsInParent) return existsInParent;  
       }
     }

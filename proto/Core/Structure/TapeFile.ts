@@ -16,7 +16,7 @@ class TapeFile extends TapeStructure {
   }
 
   Generate(generator: TapeGenerator): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(this);
     
     for (let d of this.defs)
       ret.AddCode(0, d.Generate(generator));

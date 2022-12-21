@@ -17,9 +17,9 @@ export class GeneratorJS extends TapeGenerator {
   Literal(value: TapeValue.Literal): TapeCode {
     let isString = (typeof value.value === 'string' || value.value instanceof String);
     if (isString)
-      return new TapeCode(`"${value.value}"`);
+      return new TapeCode(value, `"${value.value}"`);
     else
-      return new TapeCode(value.value);
+      return new TapeCode(value, value.value.toString());
   }
   Array(value: TapeValue.Array): TapeCode {
     let line = '[';
@@ -30,11 +30,11 @@ export class GeneratorJS extends TapeGenerator {
     line += items.join(',');
 
     line += ']';
-    return new TapeCode(line);
+    return new TapeCode(value, line);
   }
 
   Block(statement: TapeStatement.Block): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(statement);
 
     ret.AddString(0, '{');
 
@@ -49,7 +49,7 @@ export class GeneratorJS extends TapeGenerator {
     return ret;
   }
   If(statement: TapeStatement.If): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(statement);
     
     ret.AddString(0, `if (${statement.condition.Generate(this).Content()})`);
     ret.AddCode(0, statement.ifTrue.Generate(this));
@@ -62,7 +62,7 @@ export class GeneratorJS extends TapeGenerator {
     return ret;
   }
   Return(part: TapeStatement.Return): TapeCode {
-    return new TapeCode(`return ${part.expression.Generate(this).Content()};`);
+    return new TapeCode(part, `return ${part.expression.Generate(this).Content()};`);
   }
 
   Variable(definition: TapeDefinition.Variable): TapeCode {
@@ -70,13 +70,13 @@ export class GeneratorJS extends TapeGenerator {
     if (definition.init)
       line += ` = ${definition.init.Generate(this).Content()}`;
 
-    return new TapeCode(line + ';');
+    return new TapeCode(definition, line + ';');
   }
   Function(definition: TapeDefinition.Function): TapeCode {
     return GeneratorJS.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
   }
   Class(definition: TapeDefinition.Class): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(definition);
 
     ret.AddString(0, `class ${definition.name} {`);
 
@@ -85,7 +85,7 @@ export class GeneratorJS extends TapeGenerator {
       // Create __init method to call every constructor
       let initFnContent: TapeExpression[] = [];
       for (let f of initializedFields) {
-        initFnContent.push(TapeExpression.Assignment(new TapeValue.Symbol(`this.${f.name}`), f.init))
+        initFnContent.push(TapeExpression.Assignment(new TapeValue.Symbol(`${f.name}`), f.init))
       }
 
       let initFn = new TapeDefinition.Function('__init').Content(initFnContent);
@@ -97,8 +97,6 @@ export class GeneratorJS extends TapeGenerator {
         ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, initConstructor, { isMethod: false, isConstructor: true }));
       }
     }
-
-
 
     for (let c of definition.constructors)
       ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, c, { isMethod: false, isConstructor: true }));
@@ -113,31 +111,30 @@ export class GeneratorJS extends TapeGenerator {
 
 
   ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode {
-    return new TapeCode(
-      `${part.value.Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0`, part.value.Generate(this));
+    return ret;
   }
   ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode {
-    return new TapeCode(
-      `${part.target.Generate(this).Content()} = ${part.value.Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, '$0 = $1', part.target.Generate(this), part.value.Generate(this));
+    return ret;
   }
   ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode {
-    return new TapeCode(
-      `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0 ${part.operator} $1`, part.left.Generate(this), part.right.Generate(this));
+    return ret;
   }
   ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
-    
-    return new TapeCode(
-      `${part.left.Generate(this).Content()} ${part.operator} ${part.right.Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0 ${part.operator} $1`, part.left.Generate(this), part.right.Generate(this));
+    return ret;
   }
 }
 
 export namespace GeneratorJS.Utils {
   export function GenerateCallable(gen: GeneratorJS, fn: TapeDefinition.Function, settings: { isMethod: Boolean, isConstructor: Boolean }): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(fn);
     let args = fn.arguments.map(a => a.name);
 
     if (settings.isMethod)
