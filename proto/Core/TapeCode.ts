@@ -3,7 +3,7 @@ import { TapeStructure } from "./TapeStructure";
 
 class Code {
   source: TapeStructure;
-  lines: Code.Line[] = [];
+  parts: Code.Part[] = [];
 
   constructor(source: TapeStructure, content?: Code | Code.Content, indent: Number = 0) {
     this.source = source;
@@ -17,15 +17,22 @@ class Code {
 
   AddContent(indent: Number, template: String, ...placeholders: (Code | Code[])[]) {
     let content = new Code.Content(template, placeholders);
-    this.lines.push(new Code.Line(content, indent));
+    this.parts.push(new Code.Part(content, indent));
   }
 
   AddCode(indent: Number, code: Code): void {
-    this.lines.push(new Code.Line(code, indent));
+    this.parts.push(new Code.Part(code, indent));
   }
 
-  Content(indent: Number = 0): String {
-    return this.lines.map(l => ' '.repeat(+indent) + l.Content(indent)).join('\n');
+  Content(indent: Number = 0): String[] {
+    let ret: String[] = [];
+    this.parts.map(l => l.Content(indent)).forEach(l => ret.push(...l));
+    return ret;
+  }
+
+  ToSource(): String {
+    let lines = this.Content();
+    return lines.join('\n');
   }
 
   Create(parentScope: TapeScope): (Boolean | String)[] {
@@ -34,9 +41,8 @@ class Code {
     ret.push(...this.source.$Create(parentScope));
     console.log(this.source.constructor.name, ret);
 
-    for (let l of this.lines)
+    for (let l of this.parts)
       ret.push(...l.Create(this.source.scope));
-
 
     return ret;
   }
@@ -60,9 +66,9 @@ namespace Code {
 
         let isJoined = separator.length > 0;
         if (isJoined)
-          return (this.placeholders[index] as Code[]).map(p => p.Content()).join(separator) as string;
+          return (this.placeholders[index] as Code[]).map(p => p.Content()[0]).join(separator) as string;
 
-        return (this.placeholders[index] as Code).Content() as string
+        return (this.placeholders[index] as Code).Content()[0] as string
       });
       return ret;
     }
@@ -81,7 +87,7 @@ namespace Code {
     }
   }
 
-  export class Line {
+  export class Part {
     indent: Number;
     content?: Content;
     code?: Code;
@@ -106,9 +112,20 @@ namespace Code {
       return ret;
     }
 
-    Content(indent: Number): String {
-      return `[${+indent}]` + (this.content ? this.content.Content() : this.code.Content(+this.indent + +indent));
+    Content(indent: Number): String[] {
+      let ret: String[] = [];
+      if (this.content) {
+        ret.push(' '.repeat(+this.indent) + this.content.Content());
+      } else {
+        let codeLines = this.code.Content(this.indent).map(l => ' '.repeat(+this.indent) + l);
+        ret.push(...codeLines);
+      }
+
+      ret = ret.filter(l => l.trim().length > 0); // Clear empty lines
+
+      return ret;
     }
+
   }
 
 }

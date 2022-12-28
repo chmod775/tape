@@ -40,7 +40,10 @@ let mainBlock = new Tape.File([
 
   Tape.Class('car')
       .Fields([ 
-        Tape.Class.Field('cv', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0))
+        Tape.Class.Field('cv0', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
+        Tape.Class.Field('cv1', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
+        Tape.Class.Field('cv2', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
+        Tape.Class.Field('cv3', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
       ])
       .Methods([
         Tape.Class.Method('foo', Tape.Type.Primitive.Float)
@@ -86,7 +89,7 @@ let genJs = new GeneratorJS();
 
 let genOutJS = mainBlock.$Generate(genJs);
 console.log('##### JS #####');
-console.log(genOutJS.Content());
+console.log(genOutJS.ToSource());
 console.log('\n');
 /*
 let rootScope = new TapeScope(null);

@@ -47,7 +47,10 @@ export class GeneratorJS extends TapeGenerator {
     ret.AddContent(0, '{');
     for (let i of statement.items) {
       let iRet = i.$Generate(this);
-      ret.AddCode(1, iRet);
+      if (i instanceof TapeExpression)
+        ret.AddContent(1, '$0;', iRet);
+      else
+        ret.AddCode(1, iRet);
     }
     ret.AddContent(0, '}');
     return ret;
