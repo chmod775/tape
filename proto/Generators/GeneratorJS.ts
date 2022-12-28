@@ -7,6 +7,8 @@ import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 
 export class GeneratorJS extends TapeGenerator {
+  Name: String = "JS";
+
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     throw new Error('Method not implemented.');
   }
@@ -148,6 +150,11 @@ export class GeneratorJS extends TapeGenerator {
   ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
     let ret = new TapeCode(part);
     ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));
+    return ret;
+  }
+  ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0($,1)`, part.target.$Generate(this), part.args.map(v => v.$Generate(this)));
     return ret;
   }
 }

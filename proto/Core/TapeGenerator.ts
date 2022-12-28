@@ -6,6 +6,8 @@ import { TapeType } from './Structure/TapeType';
 import { TapeDefinition } from './Structure/TapeDefinition';
 
 export abstract class TapeGenerator {
+  abstract Name: String;
+  
   // Type
   abstract Type_Primitive(type: TapeType.Primitive): TapeCode;
   abstract Type_Array(type: TapeType.Array): TapeCode;
@@ -34,6 +36,7 @@ export abstract class TapeGenerator {
   abstract ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode;
   abstract ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode;
   abstract ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode;
+  abstract ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode;
 }
 
 export namespace TapeGenerator {

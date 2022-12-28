@@ -1,9 +1,11 @@
 import * as Tape from './Core/Tape'
+import * as fs from 'fs';
 import { GeneratorJS } from './Generators/GeneratorJS'
 import { GeneratorCS } from './Generators/GeneratorCS'
 import { TapeExpression } from './Core/Structure/TapeExpression';
 import { TapeScope } from './Core/TapeScope';
 import { parse, stringify } from 'yaml'
+import { TapeTemplate_Console } from './Core/Templates/TapeTemplate_Console';
 
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
 .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
@@ -35,7 +37,6 @@ let mainBlock = new Tape.File([
   Tape.Variable('b', Tape.Type.Array(Tape.Type.Primitive.Float)).InitializeWithValue(Tape.Value.Array(Tape.Value.Literal(0), Tape.Value.Literal(1), Tape.Value.Literal(2))),
 
   Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithValue(Tape.Value.Literal(10)),
-  fn,
   fn,
 
   Tape.Class('car')
@@ -69,7 +70,12 @@ let mainBlock = new Tape.File([
           )),
           Tape.Return(TapeExpression.Value(Tape.Value.Symbol('ret')))
         ])
-      ])
+      ]),
+  Tape.Function('main', Tape.Type.Primitive.Float)
+      .Content([
+        Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ])
+      ]),
+  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ]))
 ]);
 /*
 let rootScope = new TapeScope(null);
@@ -88,9 +94,13 @@ let mainBlock = Tape.Block(vars);
 let genJs = new GeneratorJS();
 
 let genOutJS = mainBlock.$Generate(genJs);
+let genOutJS_Source = genOutJS.ToSource();
 console.log('##### JS #####');
-console.log(genOutJS.ToSource());
+console.log(genOutJS_Source);
 console.log('\n');
+
+fs.writeFileSync('main.js', genOutJS_Source as string);
+
 /*
 let rootScope = new TapeScope(null);
 let errors = genOutJS.Create(rootScope);

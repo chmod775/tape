@@ -1,12 +1,13 @@
 import { TapeCode } from "../TapeCode";
 import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
+import { TapeTemplate } from "./TapeTemplate";
 import { TapeDefinition } from "./TapeDefinition";
 
 class TapeFile extends TapeStructure {
-  public defs: TapeDefinition[] = [];
+  public defs: (TapeDefinition | TapeTemplate)[] = [];
 
-  constructor(defs: TapeDefinition[]) {
+  constructor(defs: (TapeDefinition | TapeTemplate)[]) {
     super();
     this.defs = defs;
   }

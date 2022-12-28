@@ -84,6 +84,21 @@ namespace TapeExpression {
         return generator.ExpressionPart_Assign(this);
       }
     }
+
+    export class Invoke extends Part {
+      target: TapeValue.Symbol;
+      args: TapeExpression[];
+
+      constructor(target: TapeValue.Symbol, args: TapeExpression[]) {
+        super();
+        this.target = target;
+        this.args = args;
+      }
+
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.ExpressionPart_Invoke(this);
+      }
+    }
   }
 
   export enum RelationalOperators {
@@ -134,6 +149,12 @@ namespace TapeExpression {
   export function Value(value: TapeValue) : TapeExpression {
     return new TapeExpression(
       new Part.Value(value)
+    );
+  }
+
+  export function Invoke(target: TapeValue.Symbol, args: TapeExpression[]) : TapeExpression {
+    return new TapeExpression(
+      new Part.Invoke(target, args)
     );
   }
 }

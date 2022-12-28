@@ -30,6 +30,10 @@ export namespace Function {
   export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
     return new TapeDefinition.Function.Argument(name, type);
   }
+
+  export function Invoke(target: TapeValue.Symbol, args?: TapeExpression[]): TapeExpression {
+    return TapeExpression.Invoke(target, args ?? []);
+  }
 }
 
 export function Class(name: String, parent?: TapeDefinition.Class) {
