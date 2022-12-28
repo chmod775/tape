@@ -29,7 +29,7 @@ namespace TapeType {
       this.code = code;
     }
   
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Type_Primitive(this);
     }
   }
@@ -42,7 +42,7 @@ namespace TapeType {
       this.baseType = baseType;
     }
   
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Type_Array(this);
     }
   }

@@ -4,26 +4,30 @@ import { TapeType } from './TapeType'
 import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
 import { TapeDefinition } from './TapeDefinition';
+import { TapeAccess } from '../Interfaces/TapeAccess';
 
 abstract class TapeValue extends TapeStructure {
 }
 
 namespace TapeValue {
   export class This extends TapeValue {
+    private def?: TapeDefinition.Class;
+
     constructor() {
       super();
     }
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
       ];
   
       this.scope = parentScope.GetBackward(TapeDefinition.Class);
+      this.def = this.scope.owner as TapeDefinition.Class;
 
       return errors;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.This(this);
     }
 
@@ -33,6 +37,8 @@ namespace TapeValue {
   }
 
   export class Symbol extends TapeValue {
+    public def?: TapeAccess;
+
     public source?: This | Symbol;
     public name: String;
   
@@ -42,20 +48,18 @@ namespace TapeValue {
       this.source = source;
     }
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         parentScope.Exists(this.name) || `Symbol ${this.name} not defined.`,
       ];
 
       var oSource = parentScope.Find(this.name);
-      if (oSource)
-        this.scope = oSource.scope;
-      console.log(this.scope);
+      this.scope = oSource.scope;
 
       return errors;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Symbol(this);
     }
 
@@ -74,7 +78,7 @@ namespace TapeValue {
       this.value = value;
     }
   
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Literal(this);
     }
   }
@@ -89,7 +93,7 @@ namespace TapeValue {
       this.values = values;
     }
   
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Array(this);
     }
   }

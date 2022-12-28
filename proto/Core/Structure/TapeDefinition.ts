@@ -6,6 +6,7 @@ import { TapeCode } from '../TapeCode';
 import { TapeType } from './TapeType';
 import { TapeScope } from '../TapeScope';
 import { TapeStructure } from '../TapeStructure';
+import { TapeAccess } from '../Interfaces/TapeAccess';
 
 abstract class TapeDefinition extends TapeStructure {
   public name: String;
@@ -15,7 +16,7 @@ abstract class TapeDefinition extends TapeStructure {
     this.name = name;
   }
 
-  abstract Generate(generator: TapeGenerator) : TapeCode;
+  abstract $Generate(generator: TapeGenerator) : TapeCode;
 }
 
 namespace TapeDefinition {
@@ -39,11 +40,11 @@ namespace TapeDefinition {
       return this as T;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Variable(this);
     }
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.Exists(this.name) || `Variable name ${this.name} already defined.`,
       ];
@@ -76,7 +77,7 @@ namespace TapeDefinition {
       return this as T;
     }
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.Exists(this.name) || `Function name ${this.name} already defined.`,
       ];
@@ -89,7 +90,7 @@ namespace TapeDefinition {
       return errors;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Function(this);
     }
   }
@@ -102,7 +103,7 @@ namespace TapeDefinition {
         this.type = type;
       }
 
-      Generate(generator: TapeGenerator): TapeCode {
+      $Generate(generator: TapeGenerator): TapeCode {
         return generator.FunctionArgument(this);
       }
     }
@@ -111,7 +112,7 @@ namespace TapeDefinition {
   export class Method extends Function {
     public owner: Class;
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.ExistsLocal(this.name) || `Method name ${this.name} already defined.`,
       ];
@@ -128,7 +129,7 @@ namespace TapeDefinition {
   export class Field extends Variable {
     public owner: Class;
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.ExistsLocal(this.name) || `Field name ${this.name} already defined.`,
       ];
@@ -140,7 +141,7 @@ namespace TapeDefinition {
     }
   }
 
-  export class Class extends TapeDefinition {
+  export class Class extends TapeDefinition implements TapeAccess {
     public parent?: Class;
     public fields: Field[] = [];
     public constructors: Method[] = [];
@@ -151,7 +152,13 @@ namespace TapeDefinition {
       this.parent = parent;
     }
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    Access(name: String): TapeDefinition {
+      let foundField = this.fields.filter(t => t.name == name)[0];
+      let foundMethod = this.methods.filter(t => t.name == name)[0];
+      return foundField ?? foundMethod;
+    }
+
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.Exists(this.name) || `Class name ${this.name} already defined.`,
       ];
@@ -178,7 +185,7 @@ namespace TapeDefinition {
       return this;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Class(this);
     }
 

@@ -11,11 +11,11 @@ class TapeFile extends TapeStructure {
     this.defs = defs;
   }
 
-  Generate(generator: TapeGenerator): TapeCode {
+  $Generate(generator: TapeGenerator): TapeCode {
     let ret = new TapeCode(this);
     
     for (let d of this.defs)
-      ret.AddCode(0, d.Generate(generator));
+      ret.AddCode(0, d.$Generate(generator));
 
     return ret;
   }

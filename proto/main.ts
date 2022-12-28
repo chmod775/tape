@@ -3,6 +3,7 @@ import { GeneratorJS } from './Generators/GeneratorJS'
 import { GeneratorCS } from './Generators/GeneratorCS'
 import { TapeExpression } from './Core/Structure/TapeExpression';
 import { TapeScope } from './Core/TapeScope';
+import { parse, stringify } from 'yaml'
 
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
 .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
@@ -25,7 +26,8 @@ let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
   Tape.Return(TapeExpression.Value(Tape.Value.Symbol('ret')))
 ]);
 
-
+let yaml = stringify(fn);
+console.log(yaml);
 
 
 let mainBlock = new Tape.File([
@@ -82,15 +84,15 @@ let mainBlock = Tape.Block(vars);
 
 let genJs = new GeneratorJS();
 
-let genOutJS = mainBlock.Generate(genJs);
+let genOutJS = mainBlock.$Generate(genJs);
 console.log('##### JS #####');
 console.log(genOutJS.Content());
 console.log('\n');
-
+/*
 let rootScope = new TapeScope(null);
 let errors = genOutJS.Create(rootScope);
 console.error(errors.filter(e => e != true));
-
+/*
 //console.log(genOutJS.lines[5].code.lines[1].code.lines[1].code.lines[1]);
 
 /*

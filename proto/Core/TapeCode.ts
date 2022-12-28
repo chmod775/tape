@@ -25,13 +25,13 @@ class Code {
   }
 
   Content(indent: Number = 0): String {
-    return this.lines.map(l => ' '.repeat(+indent) + l.Content()).join('\n');
+    return this.lines.map(l => ' '.repeat(+indent) + l.Content(indent)).join('\n');
   }
 
   Create(parentScope: TapeScope): (Boolean | String)[] {
     let ret: (Boolean | String)[] = [];
 
-    ret.push(...this.source.Create(parentScope));
+    ret.push(...this.source.$Create(parentScope));
     console.log(this.source.constructor.name, ret);
 
     for (let l of this.lines)
@@ -86,13 +86,13 @@ namespace Code {
     content?: Content;
     code?: Code;
 
-    constructor(content: Content | Code, indent?: Number) {
-      if (content instanceof Code)
-        this.code = content as Code;
+    constructor(item: Content | Code, indent?: Number) {
+      if (item instanceof Code)
+        this.code = item as Code;
       else
-        this.content = content as Content;
+        this.content = item as Content;
       
-      if (!this.code && !this.content) throw `Content must be defined ${typeof content} '${content}'`;
+      if (!this.code && !this.content) throw `Content must be defined ${typeof item} '${item}'`;
       
       this.indent = indent ?? 0;
     }
@@ -106,8 +106,8 @@ namespace Code {
       return ret;
     }
 
-    Content(): String {
-      return ' '.repeat(+this.indent) + (this.content ? this.content.Content() : this.code.Content(this.indent));
+    Content(indent: Number): String {
+      return `[${+indent}]` + (this.content ? this.content.Content() : this.code.Content(+this.indent + +indent));
     }
   }
 

@@ -20,12 +20,12 @@ namespace TapeStatement {
     }
   
 
-    Create(parentScope: TapeScope): (Boolean | String)[] {
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
       this.scope = new TapeScope(this, parentScope);
       return [];
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Block(this);
     }
   }
@@ -49,7 +49,7 @@ namespace TapeStatement {
       return this;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.If(this);
     }
   }
@@ -62,7 +62,7 @@ namespace TapeStatement {
       this.expression = expression;
     }
 
-    Generate(generator: TapeGenerator): TapeCode {
+    $Generate(generator: TapeGenerator): TapeCode {
       return generator.Return(this);
     }
   }

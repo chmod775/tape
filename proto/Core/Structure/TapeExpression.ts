@@ -13,8 +13,8 @@ class TapeExpression extends TapeStructure {
     this.part = part;
   }
   
-  Generate(generator: TapeGenerator) : TapeCode {
-    return this.part.Generate(generator);
+  $Generate(generator: TapeGenerator) : TapeCode {
+    return this.part.$Generate(generator);
   }
 }
 
@@ -31,7 +31,7 @@ namespace TapeExpression {
         this.value = value;
       }
 
-      Generate(generator: TapeGenerator): TapeCode {
+      $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Value(this);
       }
     }
@@ -48,7 +48,7 @@ namespace TapeExpression {
         this.right = right;
       }
 
-      Generate(generator: TapeGenerator): TapeCode {
+      $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Binary(this);
       }
     }
@@ -65,7 +65,7 @@ namespace TapeExpression {
         this.right = right;
       }
 
-      Generate(generator: TapeGenerator): TapeCode {
+      $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Relational(this);
       }
     }
@@ -80,7 +80,7 @@ namespace TapeExpression {
         this.value = value;
       }
 
-      Generate(generator: TapeGenerator): TapeCode {
+      $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Assign(this);
       }
     }

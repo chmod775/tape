@@ -5,16 +5,16 @@ import { TapeScope } from "./TapeScope";
 abstract class TapeStructure {
   public scope: TapeScope;
 
-  Validate(): (Boolean | String)[] {
+  $Validate(): (Boolean | String)[] {
     return [];
   }
 
-  Create(parentScope: TapeScope): (Boolean | String)[] {
+  $Create(parentScope: TapeScope): (Boolean | String)[] {
     this.scope = parentScope;
-    return this.Validate();
+    return this.$Validate();
   }
 
-  abstract Generate(generator: TapeGenerator) : TapeCode;
+  abstract $Generate(generator: TapeGenerator) : TapeCode;
 }
 
 export { TapeStructure as TapeStructure };
