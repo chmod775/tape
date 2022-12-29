@@ -13,6 +13,8 @@ namespace TapeTemplate_Math {
       this.value = value;
 
       this.generators['JS'] = Tape.Function.Invoke(Tape.Value.Symbol('Math').Access('sqrt'), [ value ]);
+      this.generators['CS'] = Tape.Function.Invoke(Tape.Value.Symbol('Math').Access('Sqrt'), [ value ]);
+      this.generators['PY'] = Tape.Function.Invoke(Tape.Value.Symbol('math').Access('sqrt'), [ value ]);
     }
   }
 }

@@ -7,8 +7,8 @@ import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 import { TapeTemplate } from '../Core/Structure/TapeTemplate';
 
-export class GeneratorJS extends TapeGenerator {
-  Name: String = "JS";
+export class GeneratorPY extends TapeGenerator {
+  Name: String = "PY";
 
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     throw new Error('Method not implemented.');
@@ -36,8 +36,11 @@ export class GeneratorJS extends TapeGenerator {
   Literal(value: TapeValue.Literal): TapeCode {
     let ret = new TapeCode(value);
     let isString = (typeof value.value === 'string' || value.value instanceof String);
+    let isBoolean = (typeof value.value === 'boolean' || value.value instanceof Boolean);
     if (isString)
       ret.AddContent(0, `"${value.value}"`)
+    else if (isBoolean)
+      ret.AddContent(0, value.value ? 'True' : 'False');
     else
       ret.AddContent(0, value.value.toString());
     return ret;
@@ -50,29 +53,20 @@ export class GeneratorJS extends TapeGenerator {
 
   Block(statement: TapeStatement.Block): TapeCode {
     let ret = new TapeCode(statement);
-    ret.AddContent(0, '{');
     for (let i of statement.items) {
       let iRet = i.$Generate(this);
-      if (i instanceof TapeExpression)
-        ret.AddContent(1, '$0;', iRet);
-      else if (i instanceof TapeDefinition.Variable)
-        ret.AddContent(1, '$0;', iRet);
-      else if (i instanceof TapeTemplate)
-        ret.AddContent(1, '$0;', iRet);
-      else
-        ret.AddCode(1, iRet);
+      ret.AddCode(1, iRet);
     }
-    ret.AddContent(0, '}');
     return ret;
   }
   If(statement: TapeStatement.If): TapeCode {
     let ret = new TapeCode(statement);
     
-    ret.AddContent(0, 'if ($0)', statement.condition.$Generate(this));
+    ret.AddContent(0, 'if ($0):', statement.condition.$Generate(this));
     ret.AddCode(0, statement.ifTrue.$Generate(this));
 
     if (statement.ifFalse) {
-      ret.AddContent(0, 'else');
+      ret.AddContent(0, 'else:');
       ret.AddCode(0, statement.ifFalse.$Generate(this));
     }
 
@@ -81,19 +75,21 @@ export class GeneratorJS extends TapeGenerator {
   For(statement: TapeStatement.For): TapeCode {
     let ret = new TapeCode(statement);
     
-    ret.AddContent(0, 'for ($0; $1; $2)', statement.init.$Generate(this), statement.condition.$Generate(this), statement.increment.$Generate(this));
+    ret.AddContent(0, '$0', statement.init.$Generate(this));
+    ret.AddContent(0, 'while ($0):', statement.condition.$Generate(this));
     ret.AddCode(0, statement.loop.$Generate(this));
+    ret.AddContent(1, '$0', statement.increment.$Generate(this));
 
     return ret;
   }
   For_Break(statement: TapeStatement.For.Break): TapeCode {
     let ret = new TapeCode(statement);
-    ret.AddContent(0, 'break;');
+    ret.AddContent(0, 'break');
     return ret;
   }
   Return(part: TapeStatement.Return): TapeCode {
     let ret = new TapeCode(part);
-    ret.AddContent(0, 'return $0;', part.expression.$Generate(this));
+    ret.AddContent(0, 'return $0', part.expression.$Generate(this));
     return ret;
   }
 
@@ -105,13 +101,11 @@ export class GeneratorJS extends TapeGenerator {
   Variable(definition: TapeDefinition.Variable): TapeCode {
     let ret = new TapeCode(definition);
     if (definition.init)
-      ret.AddContent(0, `var ${definition.name} = $0`, definition.init.$Generate(this));
-    else
-      ret.AddContent(0, `var ${definition.name}`);
+      ret.AddContent(0, `${definition.name} = $0`, definition.init.$Generate(this));
     return ret;
   }
   Function(definition: TapeDefinition.Function): TapeCode {
-    return GeneratorJS.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
+    return GeneratorPY.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
   }
   Class(definition: TapeDefinition.Class): TapeCode {
     let ret = new TapeCode(definition);
@@ -131,24 +125,24 @@ export class GeneratorJS extends TapeGenerator {
       }
 
       let initFn = new TapeDefinition.Function('__init').Content(initFnContent);
-      ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, initFn, { isMethod: true, isConstructor: false }));
+      ret.AddCode(1, GeneratorPY.Utils.GenerateCallable(this, initFn, { isMethod: true, isConstructor: false }));
 
       if (definition.constructors.length == 0) { // If no constructors defined, define a default one with no arguments
         let initConstructorContent: TapeExpression[] = [
           TapeExpression.Invoke((new TapeValue.This()).Access(`__init`), [])
         ];
         let initConstructor = new TapeDefinition.Method('').Content(initConstructorContent);
-        ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, initConstructor, { isMethod: false, isConstructor: true }));
+        ret.AddCode(1, GeneratorPY.Utils.GenerateCallable(this, initConstructor, { isMethod: false, isConstructor: true }));
       }
     }
 
     // Constructors
     for (let c of definition.constructors)
-      ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, c, { isMethod: false, isConstructor: true }));
+      ret.AddCode(1, GeneratorPY.Utils.GenerateCallable(this, c, { isMethod: false, isConstructor: true }));
 
     // Methods
     for (let m of definition.methods)
-      ret.AddCode(1, GeneratorJS.Utils.GenerateCallable(this, m, { isMethod: true, isConstructor: false }));
+      ret.AddCode(1, GeneratorPY.Utils.GenerateCallable(this, m, { isMethod: true, isConstructor: false }));
 
     ret.AddContent(0, '}');
 
@@ -187,8 +181,8 @@ export class GeneratorJS extends TapeGenerator {
   }
 }
 
-export namespace GeneratorJS.Utils {
-  export function GenerateCallable(gen: GeneratorJS, fn: TapeDefinition.Function, settings: { isMethod: Boolean, isConstructor: Boolean }): TapeCode {
+export namespace GeneratorPY.Utils {
+  export function GenerateCallable(gen: GeneratorPY, fn: TapeDefinition.Function, settings: { isMethod: Boolean, isConstructor: Boolean }): TapeCode {
     let ret = new TapeCode(fn);
 
     if (settings.isMethod)
@@ -196,7 +190,7 @@ export namespace GeneratorJS.Utils {
     else if (settings.isConstructor)
       ret.AddContent(0, `constructor($,0)`, fn.arguments.map(a => a.$Generate(gen)));
     else
-      ret.AddContent(0, `function ${fn.name}($,0)`, fn.arguments.map(a => a.$Generate(gen)));
+      ret.AddContent(0, `def ${fn.name}($,0):`, fn.arguments.map(a => a.$Generate(gen)));
 
     ret.AddCode(0, fn.content.$Generate(gen));
     return ret;

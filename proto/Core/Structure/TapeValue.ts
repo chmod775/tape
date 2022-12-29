@@ -84,12 +84,12 @@ namespace TapeValue {
   }
   
   export class List extends TapeValue {
-    public baseType?: TapeType;
+    public baseType?: TapeType.List;
     public values: TapeValue[];
   
     constructor(baseType: TapeType, ...values: TapeValue[]) {
       super();
-      this.baseType = baseType;
+      this.baseType = new TapeType.List(baseType);
       this.values = values;
     }
   

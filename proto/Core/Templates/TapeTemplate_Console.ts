@@ -8,6 +8,8 @@ class TapeTemplate_Console extends TapeTemplate<TapeExpression> {
     super();
 
     this.generators['JS'] = Tape.Function.Invoke(Tape.Value.Symbol('console').Access('log'), [ expr ]);
+    this.generators['CS'] = Tape.Function.Invoke(Tape.Value.Symbol('Console').Access('Write'), [ expr ]);
+    this.generators['PY'] = Tape.Function.Invoke(Tape.Value.Symbol('print'), [ expr ]);
   }
 }
 /*

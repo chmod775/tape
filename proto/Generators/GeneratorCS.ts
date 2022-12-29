@@ -5,132 +5,200 @@ import { TapeExpression } from '../Core/Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
+import { TapeTemplate } from '../Core/Structure/TapeTemplate';
 
 export class GeneratorCS extends TapeGenerator {
+  Name: String = "CS";
+
   Type_Primitive(type: TapeType.Primitive): TapeCode {
-    return new TapeCode(TapeType._PrimitiveCodes[type.code]);
+    let ret = new TapeCode(type);
+
+    enum primitives {
+      bool,
+      Int8,
+      Int16,
+      Int32,
+      Int64,
+      UInt8,
+      UInt16,
+      UInt32,
+      UInt64,
+      Float,
+      Double,
+      String
+    }
+
+    ret.AddContent(0, `${primitives[type.code]}`)
+    return ret;
   }
   Type_List(type: TapeType.List): TapeCode {
-    return new TapeCode(`List<${type.baseType.$Generate(this).Content()}>`);
+    let ret = new TapeCode(type);
+    ret.AddContent(0, `List<$0>`, type.baseType.$Generate(this))
+    return ret;
   }
-  
+  Type_Class(type: TapeType.Class): TapeCode {
+    throw new Error('Method not implemented.');
+  }
+
+  This(part: TapeValue.This): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `this`);
+    return ret;
+  }
+  Symbol(part: TapeValue.Symbol): TapeCode {
+    let ret = new TapeCode(part);
+    if (part.source)
+      ret.AddContent(0, `$0.${part.name}`, part.source.$Generate(this));
+    else
+      ret.AddContent(0, `${part.name}`);
+    return ret;
+  }
   Literal(value: TapeValue.Literal): TapeCode {
+    let ret = new TapeCode(value);
     let isString = (typeof value.value === 'string' || value.value instanceof String);
     if (isString)
-      return new TapeCode(`"${value.value}"`);
+      ret.AddContent(0, `"${value.value}"`)
     else
-      return new TapeCode(value.value);
+      ret.AddContent(0, value.value.toString());
+    return ret;
   }
   List(value: TapeValue.List): TapeCode {
-    let line = `new ${value.baseType.$Generate(this).Content()}() {`;
-
-    let items: String[] = [];
-    for (var i of value.values)
-      items.push(i.$Generate(this).Content());
-    line += items.join(',');
-
-    line += '}';
-    return new TapeCode(line);
+    let ret = new TapeCode(value);
+    ret.AddContent(0, 'new $0($,1){$,2}', value.baseType.$Generate(this), value.values.map(v => v.$Generate(this)), value.values.map(t => t.$Generate(this)));
+    return ret;
   }
 
   Block(statement: TapeStatement.Block): TapeCode {
-    let ret = new TapeCode();
-
-    ret.AddString(0, '{');
-
+    let ret = new TapeCode(statement);
+    ret.AddContent(0, '{');
     for (let i of statement.items) {
       let iRet = i.$Generate(this);
-
-      ret.AddCode(1, iRet);
+      if (i instanceof TapeExpression)
+        ret.AddContent(1, '$0;', iRet);
+      else if (i instanceof TapeDefinition.Variable)
+        ret.AddContent(1, '$0;', iRet);
+      else if (i instanceof TapeTemplate)
+        ret.AddContent(1, '$0;', iRet);
+      else
+        ret.AddCode(1, iRet);
     }
-
-    ret.AddString(0, '}');
-
+    ret.AddContent(0, '}');
     return ret;
   }
   If(statement: TapeStatement.If): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(statement);
     
-    ret.AddString(0, `if (${statement.condition.$Generate(this).Content()})`);
+    ret.AddContent(0, 'if ($0)', statement.condition.$Generate(this));
     ret.AddCode(0, statement.ifTrue.$Generate(this));
 
     if (statement.ifFalse) {
-      ret.AddString(0, `else`);
+      ret.AddContent(0, 'else');
       ret.AddCode(0, statement.ifFalse.$Generate(this));
     }
 
     return ret;
   }
-  Return(part: TapeStatement.Return): TapeCode {
-    return new TapeCode(`return ${part.expression.$Generate(this).Content()};`);
-  }
-
-  Variable(definition: TapeDefinition.Variable): TapeCode {
-    let line = `${definition.type.$Generate(this).Content()} ${definition.name}`;
-    if (definition.init)
-      line += ` = ${definition.init.$Generate(this).Content()}`;
-    return new TapeCode(line + ';');
-  }
-  Function(definition: TapeDefinition.Function): TapeCode {
-    let ret = new TapeCode();
-
-    let args = [];
-    for (let a of definition.arguments) {
-      args.push(`${a.type.$Generate(this).Content()} ${a.name}`);
-    }
-
-    ret.AddString(0, `${definition.returnType ? definition.returnType.$Generate(this).Content() : 'void'} ${definition.name}(${args.join(',')})`);
-    ret.AddCode(0, definition.content.$Generate(this));
+  For(statement: TapeStatement.For): TapeCode {
+    let ret = new TapeCode(statement);
+    
+    ret.AddContent(0, 'for ($0; $1; $2)', statement.init.$Generate(this), statement.condition.$Generate(this), statement.increment.$Generate(this));
+    ret.AddCode(0, statement.loop.$Generate(this));
 
     return ret;
   }
+  For_Break(statement: TapeStatement.For.Break): TapeCode {
+    let ret = new TapeCode(statement);
+    ret.AddContent(0, 'break;');
+    return ret;
+  }
+  Return(part: TapeStatement.Return): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, 'return $0;', part.expression.$Generate(this));
+    return ret;
+  }
+
+  FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
+    return ret;
+  }
+  Variable(definition: TapeDefinition.Variable): TapeCode {
+    let ret = new TapeCode(definition);
+    if (definition.init)
+      ret.AddContent(0, `$0 ${definition.name} = $1`, definition.type.$Generate(this), definition.init.$Generate(this));
+    else
+      ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
+    return ret;
+  }
+  Function(definition: TapeDefinition.Function): TapeCode {
+    return GeneratorCS.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
+  }
   Class(definition: TapeDefinition.Class): TapeCode {
-    let ret = new TapeCode();
+    let ret = new TapeCode(definition);
 
-    ret.AddString(0, `class ${definition.name} {`);
+    ret.AddContent(0, `class ${definition.name} {`);
 
-    for (let f of definition.fields) {
-      let line = `${f.type.$Generate(this).Content()} ${f.name}`;
-      if (f.init)
-        line += ` = ${f.init.$Generate(this).Content()}`;
-      ret.AddString(1, line + ';');
-    }
+    // Fields
+    for (let f of definition.fields)
+      ret.AddCode(1, f.$Generate(this));
 
-    for (let c of definition.constructors) {
-      let args = c.arguments.map(a => a.name);
-      ret.AddString(1, `${c.name}(${args.join(',')})`)
-      ret.AddCode(1, c.content.$Generate(this));
-    }
+    // Constructors
+    for (let c of definition.constructors)
+      ret.AddCode(1, GeneratorCS.Utils.GenerateCallable(this, c, { isMethod: false, isConstructor: true }));
 
-    for (let m of definition.methods) {
-      let args = m.arguments.map(a => a.name);
-      ret.AddString(1, `${m.returnType ? m.returnType.$Generate(this).Content() : 'void'} ${m.name}(${args.join(',')})`)
-      ret.AddCode(1, m.content.$Generate(this));
-    }
+    // Methods
+    for (let m of definition.methods)
+      ret.AddCode(1, GeneratorCS.Utils.GenerateCallable(this, m, { isMethod: true, isConstructor: false }));
 
-    ret.AddString(0, `}`);
+    ret.AddContent(0, '}');
 
     return ret;
   }
 
   ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode {
-    return new TapeCode(
-      `${part.value.$Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0`, part.value.$Generate(this));
+    return ret;
   }
   ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode {
-    return new TapeCode(
-      `${part.target.$Generate(this).Content()} = ${part.value.$Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, '$0 = $1', part.target.$Generate(this), part.value.$Generate(this));
+    return ret;
   }
   ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode {
-    return new TapeCode(
-      `${part.left.$Generate(this).Content()} ${part.operator} ${part.right.$Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));
+    return ret;
   }
   ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
-    return new TapeCode(
-      `${part.left.$Generate(this).Content()} ${part.operator} ${part.right.$Generate(this).Content()}`
-    );
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));
+    return ret;
+  }
+  ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0($,1)`, part.target.$Generate(this), part.args.map(v => v.$Generate(this)));
+    return ret;
+  }
+  ExpressionPart_New(part: TapeExpression.Part.New): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `new $0($,1)`, part.target.$Generate(this), part.args.map(v => v.$Generate(this)));
+    return ret;
+  }
+}
+
+export namespace GeneratorCS.Utils {
+  export function GenerateCallable(gen: GeneratorCS, fn: TapeDefinition.Function, settings: { isMethod: Boolean, isConstructor: Boolean }): TapeCode {
+    let ret = new TapeCode(fn);
+
+    if (settings.isMethod)
+      ret.AddContent(0, `$0 ${fn.name}($,1)`, fn.returnType.$Generate(gen), fn.arguments.map(a => a.$Generate(gen)));
+    else if (settings.isConstructor)
+      ret.AddContent(0, `${0}($,0)`, fn.arguments.map(a => a.$Generate(gen)));
+    else
+      ret.AddContent(0, `$0 ${fn.name}($,1)`, fn.returnType.$Generate(gen), fn.arguments.map(a => a.$Generate(gen)));
+
+    ret.AddCode(0, fn.content.$Generate(gen));
+    return ret;
   }
 }

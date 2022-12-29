@@ -78,8 +78,8 @@ export class Value {
     return new TapeValue.Literal(null, value);
   }
 
-  static List(...values: TapeValue[]) : TapeValue.List {
-    return new TapeValue.List(null, ...values);
+  static List(baseType: TapeType, ...values: TapeValue[]) : TapeValue.List {
+    return new TapeValue.List(baseType, ...values);
   }
 }
 

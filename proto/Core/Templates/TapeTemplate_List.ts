@@ -15,6 +15,8 @@ namespace TapeTemplate_List {
       this.items = items;
 
       this.generators['JS'] = Tape.Function.Invoke(source.Access('push'), items);
+      this.generators['CS'] = Tape.Function.Invoke(source.Access('Add'), items);
+      this.generators['PY'] = Tape.Function.Invoke(source.Access('append'), items);
     }
   }
 }

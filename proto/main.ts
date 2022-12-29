@@ -8,6 +8,7 @@ import { parse, stringify } from 'yaml'
 import { TapeTemplate_Console } from './Core/Templates/TapeTemplate_Console';
 import { TapeTemplate_List } from './Core/Templates/TapeTemplate_List';
 import { TapeTemplate_Math } from './Core/Templates/TapeTemplate_Math';
+import { GeneratorPY } from './Generators/GeneratorPY';
 
 /*
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
@@ -106,24 +107,24 @@ let mainBlock = new Tape.File([
         Tape.If(
           Tape.Expression.Relational(Tape.Value.Symbol('maxValue'), Tape.Expression.RelationalOperators.Less, Tape.Value.Literal(2)),
           Tape.Block([
-            Tape.Return(TapeExpression.Value(Tape.Value.List()))
+            Tape.Return(TapeExpression.Value(Tape.Value.List(Tape.Type.Primitive.Int32)))
           ])
         ),
 
-        Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(TapeExpression.Value(Tape.Value.List())),
+        Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(TapeExpression.Value(Tape.Value.List(Tape.Type.Primitive.Int32))),
 
         new TapeTemplate_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Literal(2)) ]),
 
         Tape.For(
-          Tape.Variable('i', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(3)),
+          Tape.Variable('i', Tape.Type.Primitive.Int32).InitializeWithValue(Tape.Value.Literal(3)),
           Tape.Expression.Relational(Tape.Value.Symbol('i'), Tape.Expression.RelationalOperators.LessEqual, Tape.Value.Symbol('maxValue')),
           Tape.Expression.Assignment(Tape.Value.Symbol('i'), Tape.Expression.Binary(Tape.Value.Symbol('i'), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(2)))
         )
         .Loop(Tape.Block([
-          Tape.Variable('isPrime', Tape.Type.List(Tape.Type.Primitive.Bool)).InitializeWithValue(Tape.Value.Literal(true)),
+          Tape.Variable('isPrime', Tape.Type.Primitive.Bool).InitializeWithValue(Tape.Value.Literal(true)),
 
           Tape.For(
-            Tape.Variable('j', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(2)),
+            Tape.Variable('j', Tape.Type.Primitive.Int32).InitializeWithValue(Tape.Value.Literal(2)),
             Tape.Expression.Relational(Tape.Value.Symbol('j'), Tape.Expression.RelationalOperators.LessEqual, new TapeTemplate_Math.Sqrt(Tape.Expression.Value(Tape.Value.Symbol('i')))),
             Tape.Expression.Assignment(Tape.Value.Symbol('j'), Tape.Expression.Binary(Tape.Value.Symbol('j'), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(1)))
           )
@@ -152,15 +153,30 @@ let mainBlock = new Tape.File([
 ]);
 
 
-let genJs = new GeneratorJS();
-
-let genOutJS = mainBlock.$Generate(genJs);
+let genJS = new GeneratorJS();
+let genOutJS = mainBlock.$Generate(genJS);
 let genOutJS_Source = genOutJS.ToSource();
 console.log('##### JS #####');
 console.log(genOutJS_Source);
 console.log('\n');
-
 fs.writeFileSync('main.js', genOutJS_Source as string);
+
+let genCS = new GeneratorCS();
+let genOutCS = mainBlock.$Generate(genCS);
+let genOutCS_Source = genOutCS.ToSource();
+console.log('##### CS #####');
+console.log(genOutCS_Source);
+console.log('\n');
+fs.writeFileSync('main.cs', genOutCS_Source as string);
+
+let genPY = new GeneratorPY();
+let genOutPY = mainBlock.$Generate(genPY);
+let genOutPY_Source = genOutPY.ToSource();
+console.log('##### PY #####');
+console.log(genOutPY_Source);
+console.log('\n');
+fs.writeFileSync('main.py', genOutPY_Source as string);
+
 
 /*
 let rootScope = new TapeScope(null);
