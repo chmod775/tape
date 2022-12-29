@@ -6,7 +6,10 @@ import { TapeExpression } from './Core/Structure/TapeExpression';
 import { TapeScope } from './Core/TapeScope';
 import { parse, stringify } from 'yaml'
 import { TapeTemplate_Console } from './Core/Templates/TapeTemplate_Console';
+import { TapeTemplate_List } from './Core/Templates/TapeTemplate_List';
+import { TapeTemplate_Math } from './Core/Templates/TapeTemplate_Math';
 
+/*
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
 .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
 .Content([
@@ -75,8 +78,13 @@ let mainBlock = new Tape.File([
       .Content([
         Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ])
       ]),
+  
+  Tape.Variable('inst', Tape.Type.Class(Tape.Value.Symbol('car'))).InitializeWithExpression(Tape.Class.New(Tape.Value.Symbol('car'))),
+
+  new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('inst'))),
   new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ]))
 ]);
+*/
 /*
 let rootScope = new TapeScope(null);
 let errors = mainBlock.$Create(rootScope);
@@ -90,6 +98,59 @@ for (var i = 0; i < 100; i++)
   );
 let mainBlock = Tape.Block(vars);
 */
+
+let mainBlock = new Tape.File([
+  Tape.Function('GeneratePrimes', Tape.Type.List(Tape.Type.Primitive.Int32))
+      .Arguments(Tape.Function.Argument('maxValue', Tape.Type.Primitive.Int32))
+      .Content([
+        Tape.If(
+          Tape.Expression.Relational(Tape.Value.Symbol('maxValue'), Tape.Expression.RelationalOperators.Less, Tape.Value.Literal(2)),
+          Tape.Block([
+            Tape.Return(TapeExpression.Value(Tape.Value.List()))
+          ])
+        ),
+
+        Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(TapeExpression.Value(Tape.Value.List())),
+
+        new TapeTemplate_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Literal(2)) ]),
+
+        Tape.For(
+          Tape.Variable('i', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(3)),
+          Tape.Expression.Relational(Tape.Value.Symbol('i'), Tape.Expression.RelationalOperators.LessEqual, Tape.Value.Symbol('maxValue')),
+          Tape.Expression.Assignment(Tape.Value.Symbol('i'), Tape.Expression.Binary(Tape.Value.Symbol('i'), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(2)))
+        )
+        .Loop(Tape.Block([
+          Tape.Variable('isPrime', Tape.Type.List(Tape.Type.Primitive.Bool)).InitializeWithValue(Tape.Value.Literal(true)),
+
+          Tape.For(
+            Tape.Variable('j', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(2)),
+            Tape.Expression.Relational(Tape.Value.Symbol('j'), Tape.Expression.RelationalOperators.LessEqual, new TapeTemplate_Math.Sqrt(Tape.Expression.Value(Tape.Value.Symbol('i')))),
+            Tape.Expression.Assignment(Tape.Value.Symbol('j'), Tape.Expression.Binary(Tape.Value.Symbol('j'), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(1)))
+          )
+          .Loop(Tape.Block([
+            Tape.If(
+              Tape.Expression.Relational(Tape.Expression.Binary(Tape.Value.Symbol('i'), Tape.Expression.BinaryOperators.Modulo, Tape.Value.Symbol('j')), Tape.Expression.RelationalOperators.Equal, Tape.Value.Literal(0)),
+              Tape.Block([
+                Tape.Expression.Assignment(Tape.Value.Symbol('isPrime'), Tape.Expression.Value(Tape.Value.Literal(false))),
+                Tape.For.Break()
+              ])
+            ),
+          ])),
+
+          Tape.If(
+            Tape.Expression.Relational(Tape.Value.Symbol('isPrime'), Tape.Expression.RelationalOperators.Equal, Tape.Value.Literal(true)),
+            Tape.Block([
+              new TapeTemplate_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Symbol('i')) ]),
+            ])
+          ),
+        ])),
+
+        Tape.Return(TapeExpression.Value(Tape.Value.Symbol('primes')))
+      ]),
+
+  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ]))
+]);
+
 
 let genJs = new GeneratorJS();
 

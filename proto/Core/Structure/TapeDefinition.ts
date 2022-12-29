@@ -29,7 +29,7 @@ namespace TapeDefinition {
       this.type = type;
     }
   
-    InitializeWithValue<T extends this>(value: TapeValue.Literal | TapeValue.Array) : T {
+    InitializeWithValue<T extends this>(value: TapeValue.Literal | TapeValue.List) : T {
       value.baseType = this.type;
       this.init = new TapeExpression(new TapeExpression.Part.Value(value));
       return this as T;
@@ -189,6 +189,9 @@ namespace TapeDefinition {
       return generator.Class(this);
     }
 
+  }
+  export namespace Class {
+    
   }
 }
 

@@ -19,6 +19,15 @@ export function If(condition: TapeExpression, ifTrue: TapeStatement | TapeExpres
   return new TapeStatement.If(condition, ifTrue);
 }
 
+export function For(init: TapeDefinition.Variable | TapeExpression, condition: TapeExpression, increment: TapeExpression) : TapeStatement.For {
+  return new TapeStatement.For(init, condition, increment);
+}
+export namespace For {
+  export function Break() {
+    return new TapeStatement.For.Break();
+  }
+}
+
 export function Return(expression: TapeExpression) : TapeStatement.Return {
   return new TapeStatement.Return(expression);
 }
@@ -51,6 +60,9 @@ export namespace Class {
       return new TapeDefinition.Function.Argument(name, type);
     }
   }
+  export function New(target: TapeValue.Symbol, args?: TapeExpression[]): TapeExpression {
+    return TapeExpression.New(target, args ?? []);
+  }
 }
 
 export class Value {
@@ -66,16 +78,20 @@ export class Value {
     return new TapeValue.Literal(null, value);
   }
 
-  static Array(...values: TapeValue[]) : TapeValue.Array {
-    return new TapeValue.Array(null, ...values);
+  static List(...values: TapeValue[]) : TapeValue.List {
+    return new TapeValue.List(null, ...values);
   }
 }
 
 export class Type {
   static Primitive = TapeType.Primitive;
   
-  static Array(baseType: TapeType) : TapeType.Array {
-    return new TapeType.Array(baseType);
+  static Class(symbol: TapeValue.Symbol): TapeType.Class {
+    return new TapeType.Class(symbol);
+  }
+
+  static List(baseType: TapeType) : TapeType.List {
+    return new TapeType.List(baseType);
   }
 }
 

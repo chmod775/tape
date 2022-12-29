@@ -83,7 +83,7 @@ namespace TapeValue {
     }
   }
   
-  export class Array extends TapeValue {
+  export class List extends TapeValue {
     public baseType?: TapeType;
     public values: TapeValue[];
   
@@ -94,7 +94,7 @@ namespace TapeValue {
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
-      return generator.Array(this);
+      return generator.List(this);
     }
   }
 }

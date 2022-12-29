@@ -7,20 +7,23 @@ import { TapeDefinition } from './Structure/TapeDefinition';
 
 export abstract class TapeGenerator {
   abstract Name: String;
-  
+
   // Type
   abstract Type_Primitive(type: TapeType.Primitive): TapeCode;
-  abstract Type_Array(type: TapeType.Array): TapeCode;
+  abstract Type_List(type: TapeType.List): TapeCode;
+  abstract Type_Class(type: TapeType.Class): TapeCode;
 
   // Value
   abstract This(part: TapeValue.This): TapeCode;
   abstract Symbol(part: TapeValue.Symbol): TapeCode;
   abstract Literal(value: TapeValue.Literal): TapeCode;
-  abstract Array(value: TapeValue.Array): TapeCode;
+  abstract List(value: TapeValue.List): TapeCode;
 
   // Statement
   abstract Block(statement: TapeStatement.Block): TapeCode;
   abstract If(statement: TapeStatement.If): TapeCode;
+  abstract For(statement: TapeStatement.For): TapeCode;
+  abstract For_Break(statement: TapeStatement.For.Break): TapeCode;
   abstract Return(part: TapeStatement.Return): TapeCode;
   
   // Definition
@@ -37,6 +40,7 @@ export abstract class TapeGenerator {
   abstract ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode;
   abstract ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode;
   abstract ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode;
+  abstract ExpressionPart_New(part: TapeExpression.Part.New): TapeCode;
 }
 
 export namespace TapeGenerator {

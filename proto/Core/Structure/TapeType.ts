@@ -2,12 +2,14 @@ import { TapeGenerator } from '../TapeGenerator'
 import { TapeCode } from '../TapeCode'
 import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
+import { TapeValue } from './TapeValue';
 
 abstract class TapeType extends TapeStructure {
 }
 
 namespace TapeType {
   export enum _PrimitiveCodes {
+    Bool,
     Int8,
     Int16,
     Int32,
@@ -34,7 +36,7 @@ namespace TapeType {
     }
   }
   
-  export class Array extends TapeType {
+  export class List extends TapeType {
     public baseType: TapeType;
   
     constructor(baseType: TapeType) {
@@ -43,13 +45,26 @@ namespace TapeType {
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
-      return generator.Type_Array(this);
+      return generator.Type_List(this);
+    }
+  }
+
+  export class Class extends TapeType {
+    public symbol: TapeValue.Symbol;
+
+    constructor(symbol: TapeValue.Symbol) {
+      super();
+      this.symbol = symbol;
+    }
+  
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.Type_Class(this);
     }
   }
 }
 
-
 namespace TapeType.Primitive {
+  export const Bool = new TapeType.Primitive(TapeType._PrimitiveCodes.Bool);
   export const Int8 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int8);
   export const Int16 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int16);
   export const Int32 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int32);

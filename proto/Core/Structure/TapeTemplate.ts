@@ -3,8 +3,8 @@ import { TapeCode } from "../TapeCode";
 import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
 
-abstract class TapeTemplate extends TapeStructure {
-  public generators: { [language: string]: TapeStatement.Block } = {};
+abstract class TapeTemplate<T extends TapeStructure> extends TapeStructure {
+  public generators: { [language: string]: T } = {};
 
   $Generate(generator: TapeGenerator) : TapeCode {
     let template = this.generators[generator.Name as string];

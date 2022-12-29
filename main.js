@@ -1,47 +1,27 @@
-var a = "abc";
-var b = [0,1,2];
-var c = 10;
-function foo(n1,n2)
+function GeneratePrimes(maxValue)
 {
- var t;
- if (n1 < n2)
+ if (maxValue < 2)
  {
-  t = n1;
-  n1 = n2;
-  n2 = t;
+  return [];
  }
- var ret = n1 + n2;
- return ret;
-}
-class car {
- __init()
+ var primes = [];
+ primes.push(2)
+ for (var i = 3; i <= maxValue; i = i + 2)
  {
-  this.cv0 = 0;
-  this.cv1 = 0;
-  this.cv2 = 0;
-  this.cv3 = 0;
- }
- constructor()
- {
- }
- foo(n1,n2)
- {
-  var t;
-  if (n1 < n2)
+  var isPrime = true;
+  for (var j = 2; j <= Math.sqrt(i); j = j + 1)
   {
-   c = n1;
-   n1 = n2;
-   n2 = t;
+   if (i % j == 0)
+   {
+    isPrime = false;
+    break;
+   }
   }
-  this.cv.t = this.cv.t;
-  var ret = n1 + n2;
-  return ret;
+  if (isPrime == true)
+  {
+   primes.push(i)
+  }
  }
+ return primes;
 }
-function main()
-{
- foo(1,2);
-}
-{
- console.log(foo(1,2));
-}
+console.log(GeneratePrimes(100))

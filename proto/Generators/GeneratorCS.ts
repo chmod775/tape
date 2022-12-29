@@ -10,7 +10,7 @@ export class GeneratorCS extends TapeGenerator {
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     return new TapeCode(TapeType._PrimitiveCodes[type.code]);
   }
-  Type_Array(type: TapeType.Array): TapeCode {
+  Type_List(type: TapeType.List): TapeCode {
     return new TapeCode(`List<${type.baseType.$Generate(this).Content()}>`);
   }
   
@@ -21,7 +21,7 @@ export class GeneratorCS extends TapeGenerator {
     else
       return new TapeCode(value.value);
   }
-  Array(value: TapeValue.Array): TapeCode {
+  List(value: TapeValue.List): TapeCode {
     let line = `new ${value.baseType.$Generate(this).Content()}() {`;
 
     let items: String[] = [];

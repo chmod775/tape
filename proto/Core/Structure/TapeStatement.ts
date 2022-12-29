@@ -54,6 +54,38 @@ namespace TapeStatement {
     }
   }
 
+  export class For extends TapeStatement {
+    public init: TapeDefinition.Variable | TapeExpression;
+    public condition: TapeExpression;
+    public increment: TapeExpression;
+    public loop: TapeStatement | TapeExpression;
+
+    constructor(init: TapeDefinition.Variable | TapeExpression, condition: TapeExpression, increment: TapeExpression) {
+      super();
+  
+      this.init = init;
+      this.condition = condition;
+      this.increment = increment;
+    }
+  
+    Loop(loop: TapeStatement | TapeExpression) : For {
+      if (this.loop != undefined) throw 'Loop already defined for For';
+      this.loop = (loop instanceof TapeStatement.Block) ? loop : new TapeStatement.Block([loop]);
+      return this;
+    }
+
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.For(this);
+    }
+  }
+  export namespace For {
+    export class Break extends TapeStatement {
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.For_Break(this);
+      }
+    }
+  }
+
   export class Return extends TapeStatement {
     public expression: TapeExpression;
 

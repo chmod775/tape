@@ -54,15 +54,15 @@ namespace TapeExpression {
     }
 
     export class Relational extends Part {
-      left: TapeValue;
+      left: TapeExpression;
       operator: RelationalOperators;
-      right: TapeValue;
+      right: TapeExpression;
 
-      constructor(left: TapeValue, operator: RelationalOperators, right: TapeValue) {
+      constructor(left: TapeValue | TapeExpression, operator: RelationalOperators, right: TapeValue | TapeExpression) {
         super();
-        this.left = left;
+        this.left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
         this.operator = operator;
-        this.right = right;
+        this.right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -72,9 +72,9 @@ namespace TapeExpression {
 
     export class Assign extends Part {
       target: TapeValue.Symbol;
-      value: TapeValue;
+      value: TapeExpression;
 
-      constructor(target: TapeValue.Symbol, value: TapeValue) {
+      constructor(target: TapeValue.Symbol, value: TapeExpression) {
         super();
         this.target = target;
         this.value = value;
@@ -97,6 +97,21 @@ namespace TapeExpression {
 
       $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Invoke(this);
+      }
+    }
+
+    export class New extends Part {
+      target: TapeValue.Symbol;
+      args: TapeExpression[];
+
+      constructor(target: TapeValue.Symbol, args: TapeExpression[]) {
+        super();
+        this.target = target;
+        this.args = args;
+      }
+
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.ExpressionPart_New(this);
       }
     }
   }
@@ -134,13 +149,13 @@ namespace TapeExpression {
     );
   }
 
-  export function Relational(left: TapeValue, operator: RelationalOperators, right: TapeValue) : TapeExpression {
+  export function Relational(left: TapeValue | TapeExpression, operator: RelationalOperators, right: TapeValue | TapeExpression) : TapeExpression {
     return new TapeExpression(
       new Part.Relational(left, operator, right)
     );
   }
 
-  export function Assignment(target: TapeValue.Symbol, value: TapeValue) : TapeExpression {
+  export function Assignment(target: TapeValue.Symbol, value: TapeExpression) : TapeExpression {
     return new TapeExpression(
       new Part.Assign(target, value)
     );
@@ -155,6 +170,12 @@ namespace TapeExpression {
   export function Invoke(target: TapeValue.Symbol, args: TapeExpression[]) : TapeExpression {
     return new TapeExpression(
       new Part.Invoke(target, args)
+    );
+  }
+
+  export function New(target: TapeValue.Symbol, args: TapeExpression[]) : TapeExpression {
+    return new TapeExpression(
+      new Part.New(target, args)
     );
   }
 }
