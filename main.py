@@ -1,6 +1,3 @@
-from typing import List
-import math
-
 def GeneratePrimes(maxValue):
  if (maxValue < 2):
   return []

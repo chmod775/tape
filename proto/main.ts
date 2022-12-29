@@ -9,6 +9,7 @@ import { TapeTemplate_Console } from './Core/Templates/TapeTemplate_Console';
 import { TapeTemplate_List } from './Core/Templates/TapeTemplate_List';
 import { TapeTemplate_Math } from './Core/Templates/TapeTemplate_Math';
 import { GeneratorPY } from './Generators/GeneratorPY';
+import { TapeLibrary_ForLoops } from './Core/Libraries/TapeLibrary_ForLoops';
 
 /*
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
@@ -149,9 +150,18 @@ let mainBlock = new Tape.File([
         Tape.Return(TapeExpression.Value(Tape.Value.Symbol('primes')))
       ]),
 
-  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ]))
-]);
+  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ])),
 
+  new TapeLibrary_ForLoops.Each(Tape.Value.Symbol('item'), Tape.Value.Symbol('primes'), Tape.Block([
+    Tape.If(
+      Tape.Expression.Relational(Tape.Expression.Binary(Tape.Value.Symbol('i'), Tape.Expression.BinaryOperators.Modulo, Tape.Value.Symbol('j')), Tape.Expression.RelationalOperators.Equal, Tape.Value.Literal(0)),
+      Tape.Block([
+        Tape.Expression.Assignment(Tape.Value.Symbol('isPrime'), Tape.Expression.Value(Tape.Value.Literal(false))),
+        Tape.For.Break()
+      ])
+    ),
+  ]))
+]);
 
 let genJS = new GeneratorJS();
 let genOutJS = mainBlock.$Generate(genJS);

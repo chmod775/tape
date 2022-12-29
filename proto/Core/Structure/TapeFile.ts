@@ -3,11 +3,12 @@ import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
 import { TapeTemplate } from "./TapeTemplate";
 import { TapeDefinition } from "./TapeDefinition";
+import { TapeLibrary } from "./TapeLibrary";
 
 class TapeFile extends TapeStructure {
-  public defs: (TapeDefinition | TapeTemplate<TapeStructure>)[] = [];
+  public defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary)[] = [];
 
-  constructor(defs: (TapeDefinition | TapeTemplate<TapeStructure>)[]) {
+  constructor(defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary)[]) {
     super();
     this.defs = defs;
   }
