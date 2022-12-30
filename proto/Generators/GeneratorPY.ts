@@ -5,7 +5,6 @@ import { TapeExpression } from '../Core/Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
-import { TapeTemplate } from '../Core/Structure/TapeTemplate';
 import { TapeInclude } from '../Core/Structure/TapeInclude';
 
 export class GeneratorPY extends TapeGenerator {

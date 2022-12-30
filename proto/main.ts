@@ -1,15 +1,14 @@
-import * as Tape from './Core/Tape'
 import * as fs from 'fs';
+
+import * as Tape from './Core/Tape'
 import { GeneratorJS } from './Generators/GeneratorJS'
 import { GeneratorCS } from './Generators/GeneratorCS'
-import { TapeExpression } from './Core/Structure/TapeExpression';
-import { TapeScope } from './Core/TapeScope';
-import { parse, stringify } from 'yaml'
-import { TapeTemplate_Console } from './Core/Templates/TapeTemplate_Console';
-import { TapeTemplate_List } from './Core/Templates/TapeTemplate_List';
-import { TapeTemplate_Math } from './Core/Templates/TapeTemplate_Math';
 import { GeneratorPY } from './Generators/GeneratorPY';
-import { TapeLibrary_ForLoops } from './Core/Libraries/TapeLibrary_ForLoops';
+
+import { TapeGlue_Console } from './Core/Glues/TapeGlue_Console';
+import { TapeGlue_List } from './Core/Glues/TapeGlue_List';
+import { TapeGlue_Math } from './Core/Glues/TapeGlue_Math';
+import { TapeGlue_ForLoops } from './Core/Glues/TapeGlue_ForLoops';
 
 /*
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
@@ -102,7 +101,7 @@ let mainBlock = Tape.Block(vars);
 */
 
 let mainBlock = new Tape.File([
-    TapeTemplate_Math.Dependecies()
+    TapeGlue_Math.Dependecies()
   ],[
   Tape.Function('GeneratePrimes', Tape.Type.List(Tape.Type.Primitive.Int32))
       .Arguments(Tape.Function.Argument('maxValue', Tape.Type.Primitive.Int32))
@@ -110,13 +109,13 @@ let mainBlock = new Tape.File([
         Tape.If(
           Tape.Expression.Relational(Tape.Value.Symbol('maxValue'), Tape.Expression.RelationalOperators.Less, Tape.Value.Literal(2)),
           Tape.Block([
-            Tape.Return(TapeExpression.Value(Tape.Value.List(Tape.Type.Primitive.Int32)))
+            Tape.Return(Tape.Expression.Value(Tape.Value.List(Tape.Type.Primitive.Int32)))
           ])
         ),
 
-        Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(TapeExpression.Value(Tape.Value.List(Tape.Type.Primitive.Int32))),
+        Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(Tape.Expression.Value(Tape.Value.List(Tape.Type.Primitive.Int32))),
 
-        new TapeTemplate_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Literal(2)) ]),
+        new TapeGlue_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Literal(2)) ]),
 
         Tape.For(
           Tape.Variable('i', Tape.Type.Primitive.Int32).InitializeWithValue(Tape.Value.Literal(3)),
@@ -128,7 +127,7 @@ let mainBlock = new Tape.File([
 
           Tape.For(
             Tape.Variable('j', Tape.Type.Primitive.Int32).InitializeWithValue(Tape.Value.Literal(2)),
-            Tape.Expression.Relational(Tape.Value.Symbol('j'), Tape.Expression.RelationalOperators.LessEqual, new TapeTemplate_Math.Sqrt(Tape.Expression.Value(Tape.Value.Symbol('i')))),
+            Tape.Expression.Relational(Tape.Value.Symbol('j'), Tape.Expression.RelationalOperators.LessEqual, new TapeGlue_Math.Sqrt(Tape.Expression.Value(Tape.Value.Symbol('i')))),
             Tape.Expression.Assignment(Tape.Value.Symbol('j'), Tape.Expression.Binary(Tape.Value.Symbol('j'), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(1)))
           )
           .Loop(Tape.Block([
@@ -144,20 +143,20 @@ let mainBlock = new Tape.File([
           Tape.If(
             Tape.Expression.Relational(Tape.Value.Symbol('isPrime'), Tape.Expression.RelationalOperators.Equal, Tape.Value.Literal(true)),
             Tape.Block([
-              new TapeTemplate_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Symbol('i')) ]),
+              new TapeGlue_List.Add(Tape.Value.Symbol('primes'), [ Tape.Expression.Value(Tape.Value.Symbol('i')) ]),
             ])
           ),
         ])),
 
-        Tape.Return(TapeExpression.Value(Tape.Value.Symbol('primes')))
+        Tape.Return(Tape.Expression.Value(Tape.Value.Symbol('primes')))
       ]),
 
   Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ])),
 
-  //new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('primes'))),
+  //new TapeGlue_Console(Tape.Expression.Value(Tape.Value.Symbol('primes'))),
 
-  new TapeLibrary_ForLoops.Each(Tape.Value.Symbol('item'), Tape.Value.Symbol('primes'), Tape.Block([
-    new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('item'))),
+  new TapeGlue_ForLoops.Each(Tape.Value.Symbol('item'), Tape.Value.Symbol('primes'), Tape.Block([
+    new TapeGlue_Console(Tape.Expression.Value(Tape.Value.Symbol('item'))),
   ]))
 ]);
 

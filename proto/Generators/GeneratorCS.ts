@@ -5,7 +5,7 @@ import { TapeExpression } from '../Core/Structure/TapeExpression';
 import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
-import { TapeTemplate } from '../Core/Structure/TapeTemplate';
+import { TapeGlue } from '../Core/Structure/TapeGlue';
 import { TapeInclude } from '../Core/Structure/TapeInclude';
 
 export class GeneratorCS extends TapeGenerator {
@@ -84,7 +84,7 @@ export class GeneratorCS extends TapeGenerator {
         ret.AddContent(1, '$0;', iRet);
       else if (i instanceof TapeDefinition.Variable)
         ret.AddContent(1, '$0;', iRet);
-      else if (i instanceof TapeTemplate)
+      else if (i instanceof TapeGlue)
         ret.AddContent(1, '$0;', iRet);
       else
         ret.AddCode(1, iRet);

@@ -1,16 +1,15 @@
 import { TapeCode } from "../TapeCode";
 import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
-import { TapeTemplate } from "./TapeTemplate";
 import { TapeDefinition } from "./TapeDefinition";
-import { TapeLibrary } from "./TapeLibrary";
+import { TapeGlue } from "./TapeGlue";
 import { TapeInclude } from "./TapeInclude";
 
 class TapeFile extends TapeStructure {
-  public includes: TapeTemplate<TapeInclude>[] = [];
-  public defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary<TapeStructure>)[] = [];
+  public includes: TapeGlue<TapeInclude>[] = [];
+  public defs: (TapeDefinition | TapeGlue<TapeStructure>)[] = [];
 
-  constructor(includes: TapeTemplate<TapeInclude>[], defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary<TapeStructure>)[]) {
+  constructor(includes: TapeGlue<TapeInclude>[], defs: (TapeDefinition | TapeGlue<TapeStructure>)[]) {
     super();
     this.includes = includes;
     this.defs = defs;
