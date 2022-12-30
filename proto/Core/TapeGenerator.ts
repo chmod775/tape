@@ -41,6 +41,7 @@ export abstract class TapeGenerator {
   abstract ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode;
   abstract ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode;
   abstract ExpressionPart_New(part: TapeExpression.Part.New): TapeCode;
+  abstract ExpressionPart_Index(part: TapeExpression.Part.Index): TapeCode;
 }
 
 export namespace TapeGenerator {

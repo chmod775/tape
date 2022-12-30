@@ -6,9 +6,9 @@ import { TapeDefinition } from "./TapeDefinition";
 import { TapeLibrary } from "./TapeLibrary";
 
 class TapeFile extends TapeStructure {
-  public defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary)[] = [];
+  public defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary<TapeStructure>)[] = [];
 
-  constructor(defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary)[]) {
+  constructor(defs: (TapeDefinition | TapeTemplate<TapeStructure> | TapeLibrary<TapeStructure>)[]) {
     super();
     this.defs = defs;
   }

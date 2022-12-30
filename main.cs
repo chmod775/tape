@@ -24,4 +24,8 @@ List<Int32> GeneratePrimes(Int32 maxValue)
  }
  return primes;
 }
-Console.Write(GeneratePrimes(100))
+List<Int32> primes = GeneratePrimes(100)
+foreach (var item of primes)
+{
+ Console.Write(item);
+}

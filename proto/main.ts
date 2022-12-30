@@ -150,16 +150,12 @@ let mainBlock = new Tape.File([
         Tape.Return(TapeExpression.Value(Tape.Value.Symbol('primes')))
       ]),
 
-  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ])),
+  Tape.Variable('primes', Tape.Type.List(Tape.Type.Primitive.Int32)).InitializeWithExpression(Tape.Function.Invoke(Tape.Value.Symbol('GeneratePrimes'), [ Tape.Expression.Value(Tape.Value.Literal(100)) ])),
+
+  //new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('primes'))),
 
   new TapeLibrary_ForLoops.Each(Tape.Value.Symbol('item'), Tape.Value.Symbol('primes'), Tape.Block([
-    Tape.If(
-      Tape.Expression.Relational(Tape.Expression.Binary(Tape.Value.Symbol('i'), Tape.Expression.BinaryOperators.Modulo, Tape.Value.Symbol('j')), Tape.Expression.RelationalOperators.Equal, Tape.Value.Literal(0)),
-      Tape.Block([
-        Tape.Expression.Assignment(Tape.Value.Symbol('isPrime'), Tape.Expression.Value(Tape.Value.Literal(false))),
-        Tape.For.Break()
-      ])
-    ),
+    new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('item'))),
   ]))
 ]);
 

@@ -19,6 +19,20 @@ namespace TapeTemplate_List {
       this.generators['PY'] = Tape.Function.Invoke(source.Access('append'), items);
     }
   }
+
+  export class Length extends TapeTemplate<TapeExpression> {
+    public source: TapeValue.Symbol;
+
+    constructor(source: TapeValue.Symbol) {
+      super();
+  
+      this.source = source;
+
+      this.generators['JS'] = Tape.Expression.Value(source.Access('length'));
+      this.generators['CS'] = Tape.Function.Invoke(source.Access('Count'));
+      this.generators['PY'] = Tape.Function.Invoke(Tape.Value.Symbol('len'), [ Tape.Expression.Value(source) ]);
+    }
+  }
 }
 
 export { TapeTemplate_List as TapeTemplate_List };

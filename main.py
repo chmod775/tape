@@ -16,4 +16,6 @@ def GeneratePrimes(maxValue):
    primes.append(i)
   i = i + 2
  return primes
-print(GeneratePrimes(100))
+primes = GeneratePrimes(100)
+for item in primes:
+  print(item)

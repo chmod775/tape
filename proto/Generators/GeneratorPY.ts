@@ -179,6 +179,11 @@ export class GeneratorPY extends TapeGenerator {
     ret.AddContent(0, `new $0($,1)`, part.target.$Generate(this), part.args.map(v => v.$Generate(this)));
     return ret;
   }
+  ExpressionPart_Index(part: TapeExpression.Part.Index): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0[$1]`, part.target.$Generate(this), part.index.$Generate(this));
+    return ret;
+  }
 }
 
 export namespace GeneratorPY.Utils {

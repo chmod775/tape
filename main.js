@@ -24,12 +24,8 @@ function GeneratePrimes(maxValue)
  }
  return primes;
 }
-console.log(GeneratePrimes(100))
-for (let item in primes)
+var primes = GeneratePrimes(100)
+for (let item of primes)
 {
- if (i % j == 0)
- {
-  isPrime = false;
-  break;
- }
+ console.log(item);
 }
