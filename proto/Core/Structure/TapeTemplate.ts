@@ -8,8 +8,8 @@ abstract class TapeTemplate<T extends TapeStructure> extends TapeStructure {
 
   $Generate(generator: TapeGenerator) : TapeCode {
     let template = this.generators[generator.Name as string];
-    if (!template) throw `Undefined template for language generator ${generator.Name}`;
-
+    if (template === undefined) throw `Undefined template for language generator ${generator.Name}`;
+    if (template === null) return new TapeCode(this);
     return template.$Generate(generator);
   }
 }

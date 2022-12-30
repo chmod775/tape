@@ -2,8 +2,23 @@ import { TapeExpression } from '../Structure/TapeExpression';
 import * as Tape from '../Tape'
 import { TapeTemplate } from "../Structure/TapeTemplate";
 import { TapeValue } from '../Structure/TapeValue';
+import { TapeInclude } from '../Structure/TapeInclude';
+
+class DependeciesTemplate extends TapeTemplate<TapeInclude> {
+  constructor() {
+    super();
+
+    this.generators['JS'] = null;
+    this.generators['CS'] = null;
+    this.generators['PY'] = Tape.Include('math');
+  }
+}
 
 namespace TapeTemplate_Math {
+  export function Dependecies(): DependeciesTemplate {
+    return new DependeciesTemplate();
+  }
+
   export class Sqrt extends TapeTemplate<TapeExpression> {
     public value: TapeExpression;
 

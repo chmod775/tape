@@ -102,6 +102,8 @@ let mainBlock = Tape.Block(vars);
 */
 
 let mainBlock = new Tape.File([
+    TapeTemplate_Math.Dependecies()
+  ],[
   Tape.Function('GeneratePrimes', Tape.Type.List(Tape.Type.Primitive.Int32))
       .Arguments(Tape.Function.Argument('maxValue', Tape.Type.Primitive.Int32))
       .Content([

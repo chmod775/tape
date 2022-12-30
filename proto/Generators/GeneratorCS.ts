@@ -6,9 +6,16 @@ import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 import { TapeTemplate } from '../Core/Structure/TapeTemplate';
+import { TapeInclude } from '../Core/Structure/TapeInclude';
 
 export class GeneratorCS extends TapeGenerator {
   Name: String = "CS";
+
+  Include(include: TapeInclude): TapeCode {
+    let ret = new TapeCode(include);
+    ret.AddContent(0, `using ${include.name};`);
+    return ret;
+  }
 
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     let ret = new TapeCode(type);

@@ -4,9 +4,13 @@ import { TapeExpression } from './Structure/TapeExpression';
 import { TapeCode } from './TapeCode';
 import { TapeType } from './Structure/TapeType';
 import { TapeDefinition } from './Structure/TapeDefinition';
+import { TapeInclude } from './Structure/TapeInclude';
 
 export abstract class TapeGenerator {
   abstract Name: String;
+
+  // Include
+  abstract Include(include: TapeInclude): TapeCode;
 
   // Type
   abstract Type_Primitive(type: TapeType.Primitive): TapeCode;

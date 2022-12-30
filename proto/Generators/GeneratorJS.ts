@@ -6,9 +6,16 @@ import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 import { TapeTemplate } from '../Core/Structure/TapeTemplate';
+import { TapeInclude } from '../Core/Structure/TapeInclude';
 
 export class GeneratorJS extends TapeGenerator {
   Name: String = "JS";
+
+  Include(include: TapeInclude): TapeCode {
+    let ret = new TapeCode(include);
+    ret.AddContent(0, `const ${include.name} = require('${include.path ?? include.name}');`);
+    return ret;
+  }
 
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     throw new Error('Method not implemented.');

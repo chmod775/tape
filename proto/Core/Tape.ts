@@ -6,6 +6,7 @@ import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from './Structure/TapeType';
 import { TapeDefinition } from './Structure/TapeDefinition';
 import { TapeFile } from './Structure/TapeFile';
+import { TapeInclude } from './Structure/TapeInclude';
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
   return new TapeStatement.Block(defs);
@@ -93,6 +94,10 @@ export class Type {
   static List(baseType: TapeType) : TapeType.List {
     return new TapeType.List(baseType);
   }
+}
+
+export function Include(name: String, path?: String): TapeInclude {
+  return new TapeInclude(name, path);
 }
 
 export { TapeExpression as Expression };

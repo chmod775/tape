@@ -6,9 +6,19 @@ import { TapeCode } from '../Core/TapeCode';
 import { TapeType } from '../Core/Structure/TapeType';
 import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 import { TapeTemplate } from '../Core/Structure/TapeTemplate';
+import { TapeInclude } from '../Core/Structure/TapeInclude';
 
 export class GeneratorPY extends TapeGenerator {
   Name: String = "PY";
+
+  Include(include: TapeInclude): TapeCode {
+    let ret = new TapeCode(include);
+    if (include.path)
+      ret.AddContent(0, `import ${include.path} as ${include.name}`);
+    else
+      ret.AddContent(0, `import ${include.name}`);
+    return ret;
+  }
 
   Type_Primitive(type: TapeType.Primitive): TapeCode {
     throw new Error('Method not implemented.');
