@@ -1,3 +1,4 @@
+import * as Tape from '../Core/Tape'
 import { TapeGenerator } from '../Core/TapeGenerator';
 import { TapeValue } from '../Core/Structure/TapeValue';
 import { TapeStatement } from '../Core/Structure/TapeStatement';
@@ -8,8 +9,29 @@ import { TapeDefinition } from '../Core/Structure/TapeDefinition';
 import { TapeGlue } from '../Core/Structure/TapeGlue';
 import { TapeInclude } from '../Core/Structure/TapeInclude';
 
+const lang: string = 'CS';
+
+import { TapeGlue_Console } from '../Core/Glues/TapeGlue_Console';
+TapeGlue_Console.macro[lang] = (_: TapeGlue_Console) => Tape.Function.Invoke(Tape.Value.Symbol('Console').Access('Write'), [ _.expression ]);
+
+import { TapeGlue_ForLoops } from '../Core/Glues/TapeGlue_ForLoops';
+TapeGlue_ForLoops.Each.code[lang] = (_: TapeGlue_ForLoops.Each, generator: TapeGenerator) => {
+  let ret = new TapeCode(_);
+  ret.AddContent(0, 'foreach (var $0 of $1)', _.iterator.$Generate(generator), _.source.$Generate(generator));
+  ret.AddCode(0, _.loop.$Generate(generator));
+  return ret;
+}
+
+import { TapeGlue_List } from '../Core/Glues/TapeGlue_List';
+TapeGlue_List.Add.macro[lang] = (_: TapeGlue_List.Add) => Tape.Function.Invoke(_.source.Access('Add'), _.items);
+TapeGlue_List.Length.macro[lang] = (_: TapeGlue_List.Length) => Tape.Function.Invoke(_.source.Access('Count'));
+
+import { TapeGlue_Math } from '../Core/Glues/TapeGlue_Math';
+TapeGlue_Math.Dependecies.macro[lang] = (_: TapeGlue_Math.Dependecies) => null;
+TapeGlue_Math.Sqrt.macro[lang] = (_: TapeGlue_Math.Sqrt) => Tape.Function.Invoke(Tape.Value.Symbol('Math').Access('Sqrt'), [ _.value ]);
+
 export class GeneratorCS extends TapeGenerator {
-  Name: String = "CS";
+  Name: String = lang;
 
   Include(include: TapeInclude): TapeCode {
     let ret = new TapeCode(include);

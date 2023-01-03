@@ -9,41 +9,17 @@ import { TapeGlue } from '../Structure/TapeGlue';
 import { TapeGlue_List } from './TapeGlue_List';
 
 namespace TapeGlue_ForLoops {
-  export class Each extends TapeGlue<TapeStatement.For> {
+  export class Each extends TapeGlue<TapeStatement.For, Each>() {
     public iterator: TapeValue.Symbol;
     public source: TapeValue.Symbol;
     public loop: TapeStatement | TapeExpression;
 
     constructor(iterator: TapeValue.Symbol, source: TapeValue.Symbol, loop: TapeStatement | TapeExpression) {
       super();
-  
+
       this.iterator = iterator;
       this.source = source;
       this.loop = loop;
-      this.code['JS'] = (generator: TapeGenerator) => {
-        let ret = new TapeCode(this);
-    
-        ret.AddContent(0, 'for (let $0 of $1)', this.iterator.$Generate(generator), this.source.$Generate(generator));
-        ret.AddCode(0, this.loop.$Generate(generator));
-    
-        return ret;
-      }
-      this.code['CS'] = (generator: TapeGenerator) => {
-        let ret = new TapeCode(this);
-    
-        ret.AddContent(0, 'foreach (var $0 of $1)', this.iterator.$Generate(generator), this.source.$Generate(generator));
-        ret.AddCode(0, this.loop.$Generate(generator));
-    
-        return ret;
-      }
-      this.code['PY'] = (generator: TapeGenerator) => {
-        let ret = new TapeCode(this);
-    
-        ret.AddContent(0, 'for $0 in $1:', this.iterator.$Generate(generator), this.source.$Generate(generator));
-        ret.AddCode(1, this.loop.$Generate(generator));
-    
-        return ret;
-      }
     }
     
     public default(): TapeStatement.For {
@@ -62,5 +38,6 @@ namespace TapeGlue_ForLoops {
     }
   }
 }
+
 
 export { TapeGlue_ForLoops as TapeGlue_ForLoops };

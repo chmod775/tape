@@ -9,6 +9,7 @@ import { TapeGlue_Console } from './Core/Glues/TapeGlue_Console';
 import { TapeGlue_List } from './Core/Glues/TapeGlue_List';
 import { TapeGlue_Math } from './Core/Glues/TapeGlue_Math';
 import { TapeGlue_ForLoops } from './Core/Glues/TapeGlue_ForLoops';
+import { TapeGlue } from './Core/Structure/TapeGlue';
 
 /*
 let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
@@ -101,7 +102,7 @@ let mainBlock = Tape.Block(vars);
 */
 
 let mainBlock = new Tape.File([
-    TapeGlue_Math.Dependecies()
+    new TapeGlue_Math.Dependecies()
   ],[
   Tape.Function('GeneratePrimes', Tape.Type.List(Tape.Type.Primitive.Int32))
       .Arguments(Tape.Function.Argument('maxValue', Tape.Type.Primitive.Int32))

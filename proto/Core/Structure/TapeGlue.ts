@@ -2,21 +2,28 @@ import { TapeCode } from "../TapeCode";
 import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
 
-abstract class TapeGlue<T extends TapeStructure> extends TapeStructure {
-  public code: { [language: string]: (generator: TapeGenerator) => TapeCode } = {};
-  public macro: { [language: string]: T } = {};
+function TapeGlue<T extends TapeStructure, P>() {
+  return class _ extends TapeStructure {
+    public static code: { [language: string]: (_: P, generator: TapeGenerator) => TapeCode } = {};
+    public static macro: { [language: string]: (_: P) => T } = {};
 
-  public abstract default(): T;
+    public default(): T {
+      throw new Error('Method not implemented.');
+    }
 
-  $Generate(generator: TapeGenerator) : TapeCode {
-    let macro = this.macro[generator.Name as string];
-    if (macro) return macro.$Generate(generator);
-    if (macro === null) return new TapeCode(this);
+    $Generate(generator: TapeGenerator): TapeCode {
+      let foundMacro = _.macro[generator.Name as string];
+      if (foundMacro) {
+        let macroLambda = foundMacro(this as unknown as P);
+        if (macroLambda === null) return new TapeCode(this);
+        return foundMacro(this as unknown as P).$Generate(generator);
+      }
 
-    let code = this.code[generator.Name as string];
-    if (code) return code(generator);
+      let foundCode = _.code[generator.Name as string];
+      if (foundCode) return foundCode(this as unknown as P, generator);
 
-    return this.default().$Generate(generator);
+      return this.default().$Generate(generator);
+    }
   }
 }
 

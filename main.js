@@ -5,7 +5,7 @@ function GeneratePrimes(maxValue)
   return [];
  }
  var primes = [];
- primes.push(2);
+ primes.push(2)
  for (var i = 3; i <= maxValue; i = i + 2)
  {
   var isPrime = true;
@@ -19,7 +19,7 @@ function GeneratePrimes(maxValue)
   }
   if (isPrime == true)
   {
-   primes.push(i);
+   primes.push(i)
   }
  }
  return primes;
@@ -27,5 +27,5 @@ function GeneratePrimes(maxValue)
 var primes = GeneratePrimes(100)
 for (let item of primes)
 {
- console.log(item);
+ console.log(item)
 }

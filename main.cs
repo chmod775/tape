@@ -5,7 +5,7 @@ List<Int32> GeneratePrimes(Int32 maxValue)
   return new List<Int32>(){};
  }
  List<Int32> primes = new List<Int32>(){};
- primes.Add(2);
+ primes.Add(2)
  for (Int32 i = 3; i <= maxValue; i = i + 2)
  {
   bool isPrime = true;
@@ -19,7 +19,7 @@ List<Int32> GeneratePrimes(Int32 maxValue)
   }
   if (isPrime == true)
   {
-   primes.Add(i);
+   primes.Add(i)
   }
  }
  return primes;
@@ -27,5 +27,5 @@ List<Int32> GeneratePrimes(Int32 maxValue)
 List<Int32> primes = GeneratePrimes(100)
 foreach (var item of primes)
 {
- Console.Write(item);
+ Console.Write(item)
 }

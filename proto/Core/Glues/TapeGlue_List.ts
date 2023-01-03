@@ -4,19 +4,14 @@ import { TapeValue } from '../Structure/TapeValue';
 import { TapeGlue } from '../Structure/TapeGlue';
 
 namespace TapeGlue_List {
-  export class Add extends TapeGlue<TapeExpression> {
+  export class Add extends TapeGlue<TapeExpression, Add>() {
     public source: TapeValue.Symbol;
     public items: TapeExpression[];
 
     constructor(source: TapeValue.Symbol, items: TapeExpression[] = []) {
       super();
-  
       this.source = source;
       this.items = items;
-
-      this.macro['JS'] = Tape.Function.Invoke(source.Access('push'), items);
-      this.macro['CS'] = Tape.Function.Invoke(source.Access('Add'), items);
-      this.macro['PY'] = Tape.Function.Invoke(source.Access('append'), items);
     }
 
     public default(): TapeExpression {
@@ -24,17 +19,12 @@ namespace TapeGlue_List {
     }
   }
 
-  export class Length extends TapeGlue<TapeExpression> {
+  export class Length extends TapeGlue<TapeExpression, Length>() {
     public source: TapeValue.Symbol;
 
     constructor(source: TapeValue.Symbol) {
       super();
-  
       this.source = source;
-
-      this.macro['JS'] = Tape.Expression.Value(source.Access('length'));
-      this.macro['CS'] = Tape.Function.Invoke(source.Access('Count'));
-      this.macro['PY'] = Tape.Function.Invoke(Tape.Value.Symbol('len'), [ Tape.Expression.Value(source) ]);
     }
 
     public default(): TapeExpression {

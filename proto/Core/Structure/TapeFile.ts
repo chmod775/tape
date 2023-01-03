@@ -6,10 +6,10 @@ import { TapeGlue } from "./TapeGlue";
 import { TapeInclude } from "./TapeInclude";
 
 class TapeFile extends TapeStructure {
-  public includes: TapeGlue<TapeInclude>[] = [];
-  public defs: (TapeDefinition | TapeGlue<TapeStructure>)[] = [];
+  public includes: TapeStructure[] = [];
+  public defs: (TapeDefinition | TapeStructure)[] = [];
 
-  constructor(includes: TapeGlue<TapeInclude>[], defs: (TapeDefinition | TapeGlue<TapeStructure>)[]) {
+  constructor(includes: TapeStructure[], defs: (TapeStructure)[]) {
     super();
     this.includes = includes;
     this.defs = defs;
