@@ -1,5 +1,5 @@
 import { TapeExpression } from '../Structure/TapeExpression';
-import * as Tape from '../Tape'
+import * as Tape from '../../Tape'
 import { TapeGlue } from '../Structure/TapeGlue';
 
 class TapeGlue_Console extends TapeGlue<TapeExpression, TapeGlue_Console>() {

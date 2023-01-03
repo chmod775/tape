@@ -1,5 +1,5 @@
 import { TapeExpression } from '../Structure/TapeExpression';
-import * as Tape from '../Tape'
+import * as Tape from '../../Tape'
 import { TapeValue } from '../Structure/TapeValue';
 import { TapeGlue } from '../Structure/TapeGlue';
 

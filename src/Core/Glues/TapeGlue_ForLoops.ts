@@ -1,4 +1,4 @@
-import * as Tape from '../Tape'
+import * as Tape from '../../Tape'
 import { TapeStatement } from '../Structure/TapeStatement';
 import { TapeExpression } from '../Structure/TapeExpression';
 import { TapeDefinition } from '../Structure/TapeDefinition';

@@ -1,12 +1,12 @@
-import { TapeGenerator } from '../Core/TapeGenerator';
-import { TapeValue } from './Structure/TapeValue';
-import { TapeStatement } from './Structure/TapeStatement';
-import { TapeExpression } from './Structure/TapeExpression';
-import { TapeCode } from '../Core/TapeCode';
-import { TapeType } from './Structure/TapeType';
-import { TapeDefinition } from './Structure/TapeDefinition';
-import { TapeFile } from './Structure/TapeFile';
-import { TapeInclude } from './Structure/TapeInclude';
+import { TapeGenerator } from './Core/TapeGenerator';
+import { TapeValue } from './Core/Structure/TapeValue';
+import { TapeStatement } from './Core/Structure/TapeStatement';
+import { TapeExpression } from './Core/Structure/TapeExpression';
+import { TapeCode } from './Core/TapeCode';
+import { TapeType } from './Core/Structure/TapeType';
+import { TapeDefinition } from './Core/Structure/TapeDefinition';
+import { TapeFile } from './Core/Structure/TapeFile';
+import { TapeInclude } from './Core/Structure/TapeInclude';
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
   return new TapeStatement.Block(defs);
