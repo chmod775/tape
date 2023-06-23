@@ -36,6 +36,8 @@ export abstract class TapeGenerator {
   abstract Function(definition: TapeDefinition.Function): TapeCode;
   abstract FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode;
 
+  abstract Field(definition: TapeDefinition.Field): TapeCode;
+  abstract Method(definition: TapeDefinition.Method): TapeCode;
   abstract Class(definition: TapeDefinition.Class): TapeCode;
 
   // Expression

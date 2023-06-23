@@ -125,9 +125,7 @@ namespace Code {
 
       return ret;
     }
-
   }
-
 }
 
 export { Code as TapeCode };

@@ -14,7 +14,9 @@ class TapeExpression extends TapeStructure {
   }
   
   $Generate(generator: TapeGenerator) : TapeCode {
-    return this.part.$Generate(generator);
+    let ret = new TapeCode(this);
+    ret.AddContent(0, '$0', this.part.$Generate(generator));
+    return ret;
   }
 }
 

@@ -50,16 +50,19 @@ export function Class(name: String, parent?: TapeDefinition.Class) {
   return new TapeDefinition.Class(name, parent);
 }
 export namespace Class {
-  export function Field(name: String, type: TapeType) : TapeDefinition.Field {
-    return new TapeDefinition.Field(name, type);
+  export function Field(name: String, type: TapeType) : TapeDefinition.Class.Field {
+    return new TapeDefinition.Class.Field(name, type);
   }
-  export function Method(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Method {
-    return new TapeDefinition.Method(name, returnType, args);
+  export function Method(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Class.Method {
+    return new TapeDefinition.Class.Method(name, returnType, args);
   }
   export namespace Method {
     export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
       return new TapeDefinition.Function.Argument(name, type);
     }
+  }
+  export function Constructor(args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Class.Method {
+    return new TapeDefinition.Class.Method(null, null, args);
   }
   export function New(target: TapeValue.Symbol, args?: TapeExpression[]): TapeExpression {
     return TapeExpression.New(target, args ?? []);

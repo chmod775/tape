@@ -43,6 +43,7 @@ export class GeneratorCS extends TapeGenerator {
     let ret = new TapeCode(type);
 
     enum primitives {
+      void,
       bool,
       Int8,
       Int16,
@@ -102,11 +103,11 @@ export class GeneratorCS extends TapeGenerator {
     ret.AddContent(0, '{');
     for (let i of statement.items) {
       let iRet = i.$Generate(this);
-      if (i instanceof TapeExpression)
+      if (iRet.source instanceof TapeExpression)
         ret.AddContent(1, '$0;', iRet);
-      else if (i instanceof TapeDefinition.Variable)
+      else if (iRet.source instanceof TapeDefinition.Variable)
         ret.AddContent(1, '$0;', iRet);
-      else if (i instanceof TapeGlue)
+      else if (iRet.source instanceof TapeGlue)
         ret.AddContent(1, '$0;', iRet);
       else
         ret.AddCode(1, iRet);
@@ -154,30 +155,48 @@ export class GeneratorCS extends TapeGenerator {
   Variable(definition: TapeDefinition.Variable): TapeCode {
     let ret = new TapeCode(definition);
     if (definition.init)
-      ret.AddContent(0, `$0 ${definition.name} = $1`, definition.type.$Generate(this), definition.init.$Generate(this));
+      ret.AddContent(0, `$0 ${definition.name} = $1;`, definition.type.$Generate(this), definition.init.$Generate(this));
     else
-      ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
+      ret.AddContent(0, `$0 ${definition.name};`, definition.type.$Generate(this));
     return ret;
   }
   Function(definition: TapeDefinition.Function): TapeCode {
-    return GeneratorCS.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `$0 ${definition.name}($,1)`, definition.returnType.$Generate(this), definition.arguments.map(a => a.$Generate(this)));
+    ret.AddCode(0, definition.content.$Generate(this));
+    return ret;
+  }
+  Field(definition: TapeDefinition.Class.Field): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, 'public $0', this.Variable(definition as TapeDefinition.Variable));
+    return ret;
+  }
+  Method(definition: TapeDefinition.Class.Method): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `public $0 ${definition.name}($,1)`, definition.returnType.$Generate(this), definition.arguments.map(a => a.$Generate(this)));
+    ret.AddCode(0, definition.content.$Generate(this));
+    return ret;
   }
   Class(definition: TapeDefinition.Class): TapeCode {
     let ret = new TapeCode(definition);
 
-    ret.AddContent(0, `class ${definition.name} {`);
+    ret.AddContent(0, `public class ${definition.name} {`);
 
     // Fields
     for (let f of definition.fields)
       ret.AddCode(1, f.$Generate(this));
 
     // Constructors
-    for (let c of definition.constructors)
-      ret.AddCode(1, GeneratorCS.Utils.GenerateCallable(this, c, { isMethod: false, isConstructor: true }));
-
+    for (let c of definition.constructors) {
+      let cret = new TapeCode(c);
+      cret.AddContent(1, `public ${definition.name}($,0)`, c.arguments.map(a => a.$Generate(this)));
+      cret.AddCode(1, c.content.$Generate(this));
+      ret.AddCode(1, cret);
+    }
+    
     // Methods
     for (let m of definition.methods)
-      ret.AddCode(1, GeneratorCS.Utils.GenerateCallable(this, m, { isMethod: true, isConstructor: false }));
+      ret.AddCode(1, m.$Generate(this));
 
     ret.AddContent(0, '}');
 
@@ -217,22 +236,6 @@ export class GeneratorCS extends TapeGenerator {
   ExpressionPart_Index(part: TapeExpression.Part.Index): TapeCode {
     let ret = new TapeCode(part);
     ret.AddContent(0, `$0[$1]`, part.target.$Generate(this), part.index.$Generate(this));
-    return ret;
-  }
-}
-
-export namespace GeneratorCS.Utils {
-  export function GenerateCallable(gen: GeneratorCS, fn: TapeDefinition.Function, settings: { isMethod: Boolean, isConstructor: Boolean }): TapeCode {
-    let ret = new TapeCode(fn);
-
-    if (settings.isMethod)
-      ret.AddContent(0, `$0 ${fn.name}($,1)`, fn.returnType.$Generate(gen), fn.arguments.map(a => a.$Generate(gen)));
-    else if (settings.isConstructor)
-      ret.AddContent(0, `${0}($,0)`, fn.arguments.map(a => a.$Generate(gen)));
-    else
-      ret.AddContent(0, `$0 ${fn.name}($,1)`, fn.returnType.$Generate(gen), fn.arguments.map(a => a.$Generate(gen)));
-
-    ret.AddCode(0, fn.content.$Generate(gen));
     return ret;
   }
 }

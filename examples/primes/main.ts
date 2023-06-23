@@ -1,105 +1,15 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
-import * as Tape from './Core/Tape'
-import { GeneratorJS } from './Generators/GeneratorJS'
-import { GeneratorCS } from './Generators/GeneratorCS'
-import { GeneratorPY } from './Generators/GeneratorPY';
+import * as Tape from '../../src/Tape'
+import { GeneratorJS } from '../../src/Generators/GeneratorJS'
+import { GeneratorCS } from '../../src/Generators/GeneratorCS'
+import { GeneratorPY } from '../../src/Generators/GeneratorPY';
 
-import { TapeGlue_Console } from './Core/Glues/TapeGlue_Console';
-import { TapeGlue_List } from './Core/Glues/TapeGlue_List';
-import { TapeGlue_Math } from './Core/Glues/TapeGlue_Math';
-import { TapeGlue_ForLoops } from './Core/Glues/TapeGlue_ForLoops';
-import { TapeGlue } from './Core/Structure/TapeGlue';
-
-/*
-let fn =   Tape.Function('foo', Tape.Type.Primitive.Float)
-.Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
-.Content([
-  Tape.Variable('t', Tape.Type.Primitive.Float),
-  Tape.If(
-    Tape.Expression.Relational(Tape.Value.Symbol('n1'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('n2')),
-    Tape.Block([
-      Tape.Expression.Assignment(Tape.Value.Symbol('t'), Tape.Value.Symbol('n1')),
-      Tape.Expression.Assignment(Tape.Value.Symbol('n1'), Tape.Value.Symbol('n2')),
-      Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
-    ])
-  ),
-  //.Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
-  Tape.Variable('ret', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
-    Tape.Value.Symbol('n1'),
-    Tape.Expression.BinaryOperators.Add,
-    Tape.Value.Symbol('n2')
-  )),
-  Tape.Return(TapeExpression.Value(Tape.Value.Symbol('ret')))
-]);
-
-let yaml = stringify(fn);
-console.log(yaml);
-
-
-let mainBlock = new Tape.File([
-  Tape.Variable('a', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal('abc')),
-  Tape.Variable('b', Tape.Type.Array(Tape.Type.Primitive.Float)).InitializeWithValue(Tape.Value.Array(Tape.Value.Literal(0), Tape.Value.Literal(1), Tape.Value.Literal(2))),
-
-  Tape.Variable('c', Tape.Type.Primitive.Float).InitializeWithValue(Tape.Value.Literal(10)),
-  fn,
-
-  Tape.Class('car')
-      .Fields([ 
-        Tape.Class.Field('cv0', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
-        Tape.Class.Field('cv1', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
-        Tape.Class.Field('cv2', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
-        Tape.Class.Field('cv3', Tape.Type.Primitive.Int16).InitializeWithValue(Tape.Value.Literal(0)),
-      ])
-      .Methods([
-        Tape.Class.Method('foo', Tape.Type.Primitive.Float)
-        .Arguments(Tape.Function.Argument('n1', Tape.Type.Primitive.Float), Tape.Function.Argument('n2', Tape.Type.Primitive.Float))
-        .Content([
-          Tape.Variable('t', Tape.Type.Primitive.Float),
-          Tape.If(
-            Tape.Expression.Relational(Tape.Value.Symbol('n1'), Tape.Expression.RelationalOperators.Less, Tape.Value.Symbol('n2')),
-            Tape.Block([
-              Tape.Expression.Assignment(Tape.Value.Symbol('c'), Tape.Value.Symbol('n1')),
-              Tape.Expression.Assignment(Tape.Value.Symbol('n1'), Tape.Value.Symbol('n2')),
-              Tape.Expression.Assignment(Tape.Value.Symbol('n2'), Tape.Value.Symbol('t'))
-            ])
-          ),
-
-          Tape.Expression.Assignment(Tape.Value.This().Access('cv').Access('t'), Tape.Value.This().Access('cv').Access('t')),
-
-          //.Else(Tape.Expression.Assignment(Tape.Value.Symbol('a'), Tape.Value.Literal(20))),
-          Tape.Variable('ret', Tape.Type.Primitive.Float).InitializeWithExpression(Tape.Expression.Binary(
-            Tape.Value.Symbol('n1'),
-            Tape.Expression.BinaryOperators.Add,
-            Tape.Value.Symbol('n2')
-          )),
-          Tape.Return(TapeExpression.Value(Tape.Value.Symbol('ret')))
-        ])
-      ]),
-  Tape.Function('main', Tape.Type.Primitive.Float)
-      .Content([
-        Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ])
-      ]),
-  
-  Tape.Variable('inst', Tape.Type.Class(Tape.Value.Symbol('car'))).InitializeWithExpression(Tape.Class.New(Tape.Value.Symbol('car'))),
-
-  new TapeTemplate_Console(Tape.Expression.Value(Tape.Value.Symbol('inst'))),
-  new TapeTemplate_Console(Tape.Function.Invoke(Tape.Value.Symbol('foo'), [ Tape.Expression.Value(Tape.Value.Literal(1)), Tape.Expression.Value(Tape.Value.Literal(2)) ]))
-]);
-*/
-/*
-let rootScope = new TapeScope(null);
-let errors = mainBlock.$Create(rootScope);
-console.error(errors.filter(e => e != true));
-*/
-/*
-let vars: Variable[] = [];
-for (var i = 0; i < 100; i++)
-  vars.push(
-    Tape.Variable(`var_${i}`, Tape.DataTypes.Float).Initialize(Tape.Value.Literal(i))
-  );
-let mainBlock = Tape.Block(vars);
-*/
+import { TapeGlue_Console } from '../../src/Core/Glues/TapeGlue_Console';
+import { TapeGlue_List } from '../../src/Core/Glues/TapeGlue_List';
+import { TapeGlue_Math } from '../../src/Core/Glues/TapeGlue_Math';
+import { TapeGlue_ForLoops } from '../../src/Core/Glues/TapeGlue_ForLoops';
 
 let mainBlock = new Tape.File([
     new TapeGlue_Math.Dependecies()
@@ -167,7 +77,7 @@ let genOutJS_Source = genOutJS.ToSource();
 console.log('##### JS #####');
 console.log(genOutJS_Source);
 console.log('\n');
-fs.writeFileSync('main.js', genOutJS_Source as string);
+fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.js')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.js'), genOutJS_Source as string))
 
 let genCS = new GeneratorCS();
 let genOutCS = mainBlock.$Generate(genCS);
@@ -175,7 +85,7 @@ let genOutCS_Source = genOutCS.ToSource();
 console.log('##### CS #####');
 console.log(genOutCS_Source);
 console.log('\n');
-fs.writeFileSync('main.cs', genOutCS_Source as string);
+fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'dotnet', 'Program.cs')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'dotnet', 'Program.cs'), genOutCS_Source as string))
 
 let genPY = new GeneratorPY();
 let genOutPY = mainBlock.$Generate(genPY);
@@ -183,19 +93,4 @@ let genOutPY_Source = genOutPY.ToSource();
 console.log('##### PY #####');
 console.log(genOutPY_Source);
 console.log('\n');
-fs.writeFileSync('main.py', genOutPY_Source as string);
-
-
-/*
-let rootScope = new TapeScope(null);
-let errors = genOutJS.Create(rootScope);
-console.error(errors.filter(e => e != true));
-/*
-//console.log(genOutJS.lines[5].code.lines[1].code.lines[1].code.lines[1]);
-
-/*
-let genOutCS = mainBlock.Generate(new GeneratorCS());
-console.log('##### C# #####');
-console.log(genOutCS.Content());
-
-*/
+fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.py')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.py'), genOutPY_Source as string))

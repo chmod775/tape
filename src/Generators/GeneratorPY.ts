@@ -138,6 +138,12 @@ export class GeneratorPY extends TapeGenerator {
   Function(definition: TapeDefinition.Function): TapeCode {
     return GeneratorPY.Utils.GenerateCallable(this, definition, { isMethod: false, isConstructor: false });
   }
+  Field(definition: TapeDefinition.Class.Field): Tape.Code {
+    return this.Variable(definition as TapeDefinition.Variable);
+  }
+  Method(definition: TapeDefinition.Class.Method): Tape.Code {
+    return this.Function(definition as TapeDefinition.Function);
+  }
   Class(definition: TapeDefinition.Class): TapeCode {
     let ret = new TapeCode(definition);
 
@@ -162,7 +168,7 @@ export class GeneratorPY extends TapeGenerator {
         let initConstructorContent: TapeExpression[] = [
           TapeExpression.Invoke((new TapeValue.This()).Access(`__init`), [])
         ];
-        let initConstructor = new TapeDefinition.Method('').Content(initConstructorContent);
+        let initConstructor = new TapeDefinition.Class.Method('').Content(initConstructorContent);
         ret.AddCode(1, GeneratorPY.Utils.GenerateCallable(this, initConstructor, { isMethod: false, isConstructor: true }));
       }
     }

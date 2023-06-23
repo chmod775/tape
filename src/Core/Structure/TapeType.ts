@@ -9,6 +9,7 @@ abstract class TapeType extends TapeStructure {
 
 namespace TapeType {
   export enum _PrimitiveCodes {
+    Void,
     Bool,
     Int8,
     Int16,
@@ -64,12 +65,19 @@ namespace TapeType {
 }
 
 namespace TapeType.Primitive {
+  export const Void = new TapeType.Primitive(TapeType._PrimitiveCodes.Void);
   export const Bool = new TapeType.Primitive(TapeType._PrimitiveCodes.Bool);
   export const Int8 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int8);
   export const Int16 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int16);
   export const Int32 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int32);
   export const Int64 = new TapeType.Primitive(TapeType._PrimitiveCodes.Int64);
+  export const UInt8 = new TapeType.Primitive(TapeType._PrimitiveCodes.UInt8);
+  export const UInt16 = new TapeType.Primitive(TapeType._PrimitiveCodes.UInt16);
+  export const UInt32 = new TapeType.Primitive(TapeType._PrimitiveCodes.UInt32);
+  export const UInt64 = new TapeType.Primitive(TapeType._PrimitiveCodes.UInt64);
   export const Float = new TapeType.Primitive(TapeType._PrimitiveCodes.Float);
+  export const Double = new TapeType.Primitive(TapeType._PrimitiveCodes.Double);
+  export const String = new TapeType.Primitive(TapeType._PrimitiveCodes.String);
 }
 
 export { TapeType as TapeType };

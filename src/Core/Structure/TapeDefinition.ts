@@ -109,43 +109,11 @@ namespace TapeDefinition {
     }
   }
 
-  export class Method extends Function {
-    public owner: Class;
-
-    $Create(parentScope: TapeScope): (Boolean | String)[] {
-      let errors: (Boolean | String)[] = [
-        !parentScope.ExistsLocal(this.name) || `Method name ${this.name} already defined.`,
-      ];
-
-      parentScope.Add(this);
-
-      let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
-      this.scope = new TapeScope(this, parentScope, defs);
-
-      return errors;
-    }
-  }
-
-  export class Field extends Variable {
-    public owner: Class;
-
-    $Create(parentScope: TapeScope): (Boolean | String)[] {
-      let errors: (Boolean | String)[] = [
-        !parentScope.ExistsLocal(this.name) || `Field name ${this.name} already defined.`,
-      ];
-
-      parentScope.Add(this);
-      this.scope = parentScope;
-
-      return errors;
-    }
-  }
-
   export class Class extends TapeDefinition implements TapeAccess {
     public parent?: Class;
-    public fields: Field[] = [];
-    public constructors: Method[] = [];
-    public methods: Method[] = [];
+    public fields: Class.Field[] = [];
+    public constructors: Class.Method[] = [];
+    public methods: Class.Method[] = [];
 
     constructor(name: String, parent?: Class) {
       super(name);
@@ -170,17 +138,17 @@ namespace TapeDefinition {
       return errors;
     }
 
-    Constructors(constructors: Method[]): Class {
+    Constructors(constructors: Class.Method[]): Class {
       this.constructors = constructors;
       return this;
     }
 
-    Fields(fields: Field[]): Class {
+    Fields(fields: Class.Field[]): Class {
       this.fields = fields;
       return this;
     }
 
-    Methods(methods: Method[]): Class {
+    Methods(methods: Class.Method[]): Class {
       this.methods = methods;
       return this;
     }
@@ -188,10 +156,47 @@ namespace TapeDefinition {
     $Generate(generator: TapeGenerator): TapeCode {
       return generator.Class(this);
     }
-
   }
   export namespace Class {
-    
+    export class Method extends Function {
+      public owner: Class;
+  
+      $Create(parentScope: TapeScope): (Boolean | String)[] {
+        let errors: (Boolean | String)[] = [
+          !parentScope.ExistsLocal(this.name) || `Method name ${this.name} already defined.`,
+        ];
+  
+        parentScope.Add(this);
+  
+        let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+        this.scope = new TapeScope(this, parentScope, defs);
+  
+        return errors;
+      }
+  
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.Method(this);
+      }
+    }
+  
+    export class Field extends Variable {
+      public owner: Class;
+  
+      $Create(parentScope: TapeScope): (Boolean | String)[] {
+        let errors: (Boolean | String)[] = [
+          !parentScope.ExistsLocal(this.name) || `Field name ${this.name} already defined.`,
+        ];
+  
+        parentScope.Add(this);
+        this.scope = parentScope;
+  
+        return errors;
+      }
+  
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.Field(this);
+      }
+    }
   }
 }
 
