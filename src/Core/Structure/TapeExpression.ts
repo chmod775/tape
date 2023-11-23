@@ -39,19 +39,36 @@ namespace TapeExpression {
     }
 
     export class Binary extends Part {
-      left: TapeValue;
+      left: TapeExpression;
       operator: BinaryOperators;
-      right: TapeValue;
+      right: TapeExpression;
 
-      constructor(left: TapeValue, operator: BinaryOperators, right: TapeValue) {
+      constructor(left: TapeValue | TapeExpression, operator: BinaryOperators, right: TapeValue | TapeExpression) {
         super();
-        this.left = left;
+        this.left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
         this.operator = operator;
-        this.right = right;
+        this.right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
         return generator.ExpressionPart_Binary(this);
+      }
+    }
+
+    export class Ternary extends Part {
+      condition: TapeExpression;
+      _true: TapeExpression;
+      _false: TapeExpression;
+
+      constructor(condition: TapeExpression, _true: TapeValue | TapeExpression, _false: TapeValue | TapeExpression) {
+        super();
+        this.condition = condition;
+        this._true = (_true instanceof TapeExpression) ? _true : TapeExpression.Value(_true as TapeValue);
+        this._false = (_false instanceof TapeExpression) ? _false : TapeExpression.Value(_false as TapeValue);
+      }
+
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.ExpressionPart_Ternary(this);
       }
     }
 
@@ -145,9 +162,13 @@ namespace TapeExpression {
   export enum BinaryOperators {
     Add = '+',
     Subtract = '-',
-    Multuply = '*',
+    Multiply = '*',
     Divide = '/',
-    Modulo = '%'
+    Modulo = '%',
+    And = '&',
+    Or = '|',
+    LogicAnd = '&&',
+    LogicOr = '||'
   }
 
   export function Parse(expression: String) : TapeExpression {
@@ -160,9 +181,15 @@ namespace TapeExpression {
     );
   }
 
-  export function Binary(left: TapeValue, operator: BinaryOperators, right: TapeValue) : TapeExpression {
+  export function Binary(left: TapeValue | TapeExpression, operator: BinaryOperators, right: TapeValue | TapeExpression) : TapeExpression {
     return new TapeExpression(
       new Part.Binary(left, operator, right)
+    );
+  }
+
+  export function Ternary(condition: TapeExpression, _true: TapeValue | TapeExpression, _false: TapeValue | TapeExpression) : TapeExpression {
+    return new TapeExpression(
+      new Part.Ternary(condition, _true, _false)
     );
   }
 

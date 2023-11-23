@@ -36,14 +36,15 @@ export abstract class TapeGenerator {
   abstract Function(definition: TapeDefinition.Function): TapeCode;
   abstract FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode;
 
-  abstract Field(definition: TapeDefinition.Field): TapeCode;
-  abstract Method(definition: TapeDefinition.Method): TapeCode;
+  abstract Field(definition: TapeDefinition.Class.Field): TapeCode;
+  abstract Method(definition: TapeDefinition.Class.Method): TapeCode;
   abstract Class(definition: TapeDefinition.Class): TapeCode;
 
   // Expression
   abstract ExpressionPart_Value(part: TapeExpression.Part.Value): TapeCode;
   abstract ExpressionPart_Assign(part: TapeExpression.Part.Assign): TapeCode;
   abstract ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode;
+  abstract ExpressionPart_Ternary(part: TapeExpression.Part.Ternary): TapeCode;
   abstract ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode;
   abstract ExpressionPart_Invoke(part: TapeExpression.Part.Invoke): TapeCode;
   abstract ExpressionPart_New(part: TapeExpression.Part.New): TapeCode;

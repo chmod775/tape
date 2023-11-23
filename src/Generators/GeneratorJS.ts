@@ -217,6 +217,11 @@ export class GeneratorJS extends TapeGenerator {
     ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));
     return ret;
   }
+  ExpressionPart_Ternary(part: Tape.Expression.Part.Ternary): TapeCode {
+    let ret = new TapeCode(part);
+    ret.AddContent(0, `$0 ? $1 : $2`, part.condition.$Generate(this), part._true.$Generate(this), part._false.$Generate(this));
+    return ret;
+  }
   ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {
     let ret = new TapeCode(part);
     ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));

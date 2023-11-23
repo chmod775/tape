@@ -2,11 +2,16 @@
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "dist/commonjs",
+    "outDir": "dist",
     "target": "es6",
     "strict": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "declaration": true,
+    "emitDeclarationOnly": true
   },
+  "include": [
+    "src/Tape.ts"
+  ],
   "exclude": [
     "dist",
     "node_modules"

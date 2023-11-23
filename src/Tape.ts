@@ -107,3 +107,21 @@ export { TapeExpression as Expression };
 export { TapeGenerator as Generator };
 export { TapeCode as Code };
 export { TapeFile as File };
+
+import { GeneratorJS } from './Generators/GeneratorJS';
+import { GeneratorCS } from './Generators/GeneratorCS';
+import { GeneratorPY } from './Generators/GeneratorPY';
+
+export namespace Generators {
+  export function JS(): GeneratorJS {
+    return new GeneratorJS();
+  }
+
+  export function CS(): GeneratorCS {
+    return new GeneratorCS();
+  }
+
+  export function PY(): GeneratorPY {
+    return new GeneratorPY();
+  }
+}
