@@ -155,9 +155,9 @@ export class GeneratorCS extends TapeGenerator {
   Variable(definition: TapeDefinition.Variable): TapeCode {
     let ret = new TapeCode(definition);
     if (definition.init)
-      ret.AddContent(0, `$0 ${definition.name} = $1;`, definition.type.$Generate(this), definition.init.$Generate(this));
+      ret.AddContent(0, `$0 ${definition.name} = $1`, definition.type.$Generate(this), definition.init.$Generate(this));
     else
-      ret.AddContent(0, `$0 ${definition.name};`, definition.type.$Generate(this));
+      ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
     return ret;
   }
   Function(definition: TapeDefinition.Function): TapeCode {

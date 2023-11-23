@@ -198,7 +198,13 @@ export class GeneratorPY extends TapeGenerator {
   }
   ExpressionPart_Binary(part: TapeExpression.Part.Binary): TapeCode {
     let ret = new TapeCode(part);
-    ret.AddContent(0, `$0 ${part.operator} $1`, part.left.$Generate(this), part.right.$Generate(this));
+
+    let logicalOperatorMap: { [ key in TapeExpression.BinaryOperators ]?: string } = {
+      [TapeExpression.BinaryOperators.LogicAnd]: 'and',
+      [TapeExpression.BinaryOperators.LogicOr]: 'or',
+    };
+
+    ret.AddContent(0, `$0 ${logicalOperatorMap[part.operator]} $1`, part.left.$Generate(this), part.right.$Generate(this));
     return ret;
   }
   ExpressionPart_Ternary(part: Tape.Expression.Part.Ternary): TapeCode {
