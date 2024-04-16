@@ -111,6 +111,7 @@ export { TapeFile as File };
 import { GeneratorJS } from './Generators/GeneratorJS';
 import { GeneratorCS } from './Generators/GeneratorCS';
 import { GeneratorPY } from './Generators/GeneratorPY';
+import { GeneratorC } from './Generators/GeneratorC';
 
 export namespace Generators {
   export function JS(): GeneratorJS {
@@ -123,5 +124,9 @@ export namespace Generators {
 
   export function PY(): GeneratorPY {
     return new GeneratorPY();
+  }
+
+  export function C(): GeneratorC {
+    return new GeneratorC();
   }
 }

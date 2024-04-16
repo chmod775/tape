@@ -57,11 +57,16 @@ namespace TapeDefinition {
   }
 
   export class Function extends TapeDefinition {
-    public returnType?: TapeType;
+    public returnType: TapeType;
     public arguments: Function.Argument[] = [];
-    public content?: TapeStatement.Block;
 
-    constructor(name: String, returnType?: TapeType, args?: Function.Argument[]) {
+    public _content?: TapeStatement.Block;
+    public get content(): TapeStatement.Block {
+      if (!this._content) throw `Cannot access null content`;
+      return this._content;
+    }
+
+    constructor(name: String, returnType: TapeType = TapeType.Primitive.Void, args?: Function.Argument[]) {
       super(name);
       this.returnType = returnType;
       this.arguments = args ?? [];
@@ -73,7 +78,7 @@ namespace TapeDefinition {
     }
 
     Content<T extends this>(items: (TapeExpression | TapeStatement | TapeDefinition)[]): T {
-      this.content = new TapeStatement.Block(items);
+      this._content = new TapeStatement.Block(items);
       return this as T;
     }
 
