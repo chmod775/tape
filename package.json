@@ -1,7 +1,7 @@
 {
   "name": "tape",
   "description": "TAPE code generator",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "files": [
     "dist"
   ],
@@ -15,7 +15,7 @@
     "esbuild": "0.19.7"
   },
   "scripts": {
-    "build": ".\\node_modules\\.bin\\esbuild src/Tape.ts --format=cjs --bundle --outfile=dist/Tape.js && tsc",
+    "build": ".\\node_modules\\.bin\\esbuild src/Tape.ts --format=esm --bundle --outfile=dist/Tape.js && tsc",
     "pack": "npm version patch --no-git-tag-version && npm run build && npm pack"
   }
 }

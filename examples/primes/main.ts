@@ -10,10 +10,25 @@ import { TapeGlue_Console } from '../../src/Core/Glues/TapeGlue_Console';
 import { TapeGlue_List } from '../../src/Core/Glues/TapeGlue_List';
 import { TapeGlue_Math } from '../../src/Core/Glues/TapeGlue_Math';
 import { TapeGlue_ForLoops } from '../../src/Core/Glues/TapeGlue_ForLoops';
+import { GeneratorC } from '../../src/Generators/GeneratorC';
+import { TapeType } from '../../src/Core/Structure/TapeType';
+
+let struct_a = Tape.CustomType('Struct_A', [
+  Tape.CustomType.Item('run', TapeType.Primitive.Bool),
+  Tape.CustomType.Item('stop', TapeType.Primitive.Bool)
+]);
 
 let mainBlock = new Tape.File([
     new TapeGlue_Math.Dependecies()
   ],[
+  
+  struct_a,
+
+  Tape.CustomType('Struct_B', [
+    Tape.CustomType.Item('Motor_A', Tape.Type.Custom(struct_a)),
+    Tape.CustomType.Item('Motor_B', Tape.Type.Custom(struct_a))
+  ]),
+
   Tape.Function('GeneratePrimes', Tape.Type.List(Tape.Type.Primitive.Int32))
       .Arguments(Tape.Function.Argument('maxValue', Tape.Type.Primitive.Int32))
       .Content([
@@ -79,18 +94,26 @@ console.log(genOutJS_Source);
 console.log('\n');
 fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.js')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.js'), genOutJS_Source as string))
 
-let genCS = new GeneratorCS();
-let genOutCS = mainBlock.$Generate(genCS);
-let genOutCS_Source = genOutCS.ToSource();
-console.log('##### CS #####');
-console.log(genOutCS_Source);
-console.log('\n');
-fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'dotnet', 'Program.cs')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'dotnet', 'Program.cs'), genOutCS_Source as string))
+// let genCS = new GeneratorCS();
+// let genOutCS = mainBlock.$Generate(genCS);
+// let genOutCS_Source = genOutCS.ToSource();
+// console.log('##### CS #####');
+// console.log(genOutCS_Source);
+// console.log('\n');
+// fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'dotnet', 'Program.cs')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'dotnet', 'Program.cs'), genOutCS_Source as string))
 
-let genPY = new GeneratorPY();
-let genOutPY = mainBlock.$Generate(genPY);
-let genOutPY_Source = genOutPY.ToSource();
-console.log('##### PY #####');
-console.log(genOutPY_Source);
-console.log('\n');
-fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.py')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.py'), genOutPY_Source as string))
+// let genPY = new GeneratorPY();
+// let genOutPY = mainBlock.$Generate(genPY);
+// let genOutPY_Source = genOutPY.ToSource();
+// console.log('##### PY #####');
+// console.log(genOutPY_Source);
+// console.log('\n');
+// fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.py')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.py'), genOutPY_Source as string))
+
+// let genC = new GeneratorC();
+// let genOutC = mainBlock.$Generate(genC);
+// let genOutC_Source = genOutC.ToSource();
+// console.log('##### C #####');
+// console.log(genOutC_Source);
+// console.log('\n');
+// fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.c')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.c'), genOutC_Source as string))

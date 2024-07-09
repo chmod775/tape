@@ -50,9 +50,45 @@ namespace TapeDefinition {
       ];
 
       parentScope.Add(this);
-      this.scope = parentScope;
+      
+      this.type.$Create(parentScope);
+      this.scope = this.type.scope;
 
       return errors;
+    }
+  }
+
+  export class CustomType extends TapeDefinition {
+    public items: CustomType.Item[];
+
+    constructor(name: String, items: CustomType.Item[]) {
+      super(name);
+      this.items = items;
+    }
+
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
+      let errors: (Boolean | String)[] = [
+        !parentScope.Exists(this.name) || `CustomType name ${this.name} already defined.`,
+      ];
+
+      parentScope.Add(this);
+
+      this.scope = new TapeScope(this);
+
+      return errors;
+    }
+
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.CustomType(this);
+    }
+  }
+  export namespace CustomType {
+    export class Item extends Variable {
+      public owner: CustomType;
+  
+      $Generate(generator: TapeGenerator): TapeCode {
+        return generator.CustomType_Item(this);
+      }
     }
   }
 
@@ -102,10 +138,22 @@ namespace TapeDefinition {
   export namespace Function {
     export class Argument extends TapeDefinition {
       public type: TapeType;
+      public IsReadWrite: boolean = false;
 
       constructor(name: String, type: TapeType) {
         super(name);
         this.type = type;
+      }
+
+      public AsReadWrite(): Function.Argument {
+        this.IsReadWrite = true;
+        return this;
+      }
+      
+      $Create(parentScope: TapeScope): (Boolean | String)[] {
+        this.type.$Create(parentScope);
+        this.scope = this.type.scope;
+        return this.$Validate();
       }
 
       $Generate(generator: TapeGenerator): TapeCode {

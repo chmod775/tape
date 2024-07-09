@@ -46,11 +46,14 @@ export class GeneratorC extends TapeGenerator {
   Type_Class(type: TapeType.Class): TapeCode {
     throw new Error('Method not implemented.');
   }
+  Type_Custom(type: TapeType.Custom): Tape.Code {
+    let ret = new TapeCode(type);
+    ret.AddContent(0, `${type.def.name}`);
+    return ret;
+  }
 
   This(part: TapeValue.This): TapeCode {
-    let ret = new TapeCode(part);
-    ret.AddContent(0, `this`);
-    return ret;
+    throw 'C Generator does not include this';
   }
   Symbol(part: TapeValue.Symbol): TapeCode {
     let ret = new TapeCode(part);
@@ -122,9 +125,26 @@ export class GeneratorC extends TapeGenerator {
     return ret;
   }
 
+  CustomType(definition: TapeDefinition.CustomType): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `typedef struct {`);
+    for (let item of definition.items)
+      ret.AddContent(1, `$0`, item.$Generate(this));
+    ret.AddContent(0, `} ${definition.name};`);
+    return ret;
+  }
+  CustomType_Item(definition: TapeDefinition.CustomType.Item): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `$0 ${definition.name};`, definition.type.$Generate(this));
+    return ret;
+  }
+
   FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode {
     let ret = new TapeCode(definition);
-    ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
+    if (definition.IsReadWrite)
+      ret.AddContent(0, `$0 *${definition.name}`, definition.type.$Generate(this));
+    else
+      ret.AddContent(0, `$0 ${definition.name}`, definition.type.$Generate(this));
     return ret;
   }
   Variable(definition: TapeDefinition.Variable): TapeCode {

@@ -33,12 +33,25 @@ export function Return(expression: TapeExpression) : TapeStatement.Return {
   return new TapeStatement.Return(expression);
 }
 
+export function CustomType(name: string, items: TapeDefinition.CustomType.Item[]): TapeDefinition.CustomType {
+  return new TapeDefinition.CustomType(name, items);
+}
+export namespace CustomType {
+  export function Item(name: String, type: TapeType) : TapeDefinition.CustomType.Item {
+    return new TapeDefinition.CustomType.Item(name, type);
+  }
+}
+
 export function Function(name: String, returnType?: TapeType, args?: TapeDefinition.Function.Argument[]) : TapeDefinition.Function {
   return new TapeDefinition.Function(name, returnType, args);
 }
 export namespace Function {
   export function Argument(name: String, type: TapeType): TapeDefinition.Function.Argument {
     return new TapeDefinition.Function.Argument(name, type);
+  }
+
+  export function ReadWriteArgument(name: String, type: TapeType): TapeDefinition.Function.Argument {
+    return new TapeDefinition.Function.Argument(name, type).AsReadWrite();
   }
 
   export function Invoke(target: TapeValue.Symbol, args?: TapeExpression[]): TapeExpression {
@@ -90,7 +103,11 @@ export class Value {
 export class Type {
   static Primitive = TapeType.Primitive;
   
-  static Class(symbol: TapeValue.Symbol): TapeType.Class {
+  static Custom(symbol: TapeDefinition.CustomType): TapeType.Custom {
+    return new TapeType.Custom(symbol);
+  }
+
+  static Class(symbol: TapeDefinition.Class): TapeType.Class {
     return new TapeType.Class(symbol);
   }
 

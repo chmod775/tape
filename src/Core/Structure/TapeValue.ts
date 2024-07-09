@@ -49,6 +49,13 @@ namespace TapeValue {
     }
 
     $Create(parentScope: TapeScope): (Boolean | String)[] {
+      if (this.scope) return [];
+      
+      if (this.source) {
+        this.source.$Create(parentScope);
+        parentScope = this.source.scope;
+      }
+
       let errors: (Boolean | String)[] = [
         parentScope.Exists(this.name) || `Symbol ${this.name} not defined.`,
       ];

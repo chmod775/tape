@@ -16,6 +16,7 @@ export abstract class TapeGenerator {
   abstract Type_Primitive(type: TapeType.Primitive): TapeCode;
   abstract Type_List(type: TapeType.List): TapeCode;
   abstract Type_Class(type: TapeType.Class): TapeCode;
+  abstract Type_Custom(type: TapeType.Custom): TapeCode;
 
   // Value
   abstract This(part: TapeValue.This): TapeCode;
@@ -31,6 +32,9 @@ export abstract class TapeGenerator {
   abstract Return(part: TapeStatement.Return): TapeCode;
   
   // Definition
+  abstract CustomType(definition: TapeDefinition.CustomType): TapeCode;
+  abstract CustomType_Item(definition: TapeDefinition.CustomType.Item): TapeCode;
+  
   abstract Variable(definition: TapeDefinition.Variable): TapeCode;
   
   abstract Function(definition: TapeDefinition.Function): TapeCode;

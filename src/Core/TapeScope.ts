@@ -46,6 +46,14 @@ class TapeScope {
   Exists(name: String, onlyLocal: Boolean = false, stop: (typeof TapeDefinition)[] = []): Boolean {
     return !!this.Find(name, onlyLocal, stop);
   }
+
+  Print(indent: number = 0): string {
+    return [
+      ' '.repeat(+indent) + this.owner.constructor.name,
+      ' '.repeat(+indent) + Object.keys(this.defs),
+      this.parent ? this.parent.Print(indent + 1) : ''
+    ].join('\n');
+  }
 }
 
 export { TapeScope as TapeScope };

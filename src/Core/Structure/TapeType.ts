@@ -3,6 +3,7 @@ import { TapeCode } from '../TapeCode'
 import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
 import { TapeValue } from './TapeValue';
+import { TapeDefinition } from './TapeDefinition';
 
 abstract class TapeType extends TapeStructure {
 }
@@ -51,15 +52,33 @@ namespace TapeType {
   }
 
   export class Class extends TapeType {
-    public symbol: TapeValue.Symbol;
+    public def: TapeDefinition.Class;
 
-    constructor(symbol: TapeValue.Symbol) {
+    constructor(def: TapeDefinition.Class) {
       super();
-      this.symbol = symbol;
+      this.def = def;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
       return generator.Type_Class(this);
+    }
+  }
+
+  export class Custom extends TapeType {
+    public def: TapeDefinition.CustomType;
+
+    constructor(def: TapeDefinition.CustomType) {
+      super();
+      this.def = def;
+    }
+  
+    $Create(parentScope: TapeScope): (Boolean | String)[] {
+      this.scope = this.def.scope;
+      return this.$Validate();
+    }
+
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.Type_Custom(this);
     }
   }
 }

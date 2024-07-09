@@ -48,6 +48,10 @@ export class GeneratorJS extends TapeGenerator {
   Type_Class(type: TapeType.Class): TapeCode {
     throw new Error('Method not implemented.');
   }
+  Type_Custom(type: TapeType.Custom): Tape.Code {
+    let ret = new TapeCode(type);
+    return ret;
+  }
 
   This(part: TapeValue.This): TapeCode {
     let ret = new TapeCode(part);
@@ -123,6 +127,15 @@ export class GeneratorJS extends TapeGenerator {
   Return(part: TapeStatement.Return): TapeCode {
     let ret = new TapeCode(part);
     ret.AddContent(0, 'return $0;', part.expression.$Generate(this));
+    return ret;
+  }
+
+  CustomType(definition: TapeDefinition.CustomType): Tape.Code {
+    let ret = new TapeCode(definition);
+    return ret;
+  }
+  CustomType_Item(definition: TapeDefinition.CustomType.Item): Tape.Code {
+    let ret = new TapeCode(definition);
     return ret;
   }
 
