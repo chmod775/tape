@@ -209,7 +209,7 @@ export class GeneratorPY extends TapeGenerator {
   }
   ExpressionPart_Ternary(part: Tape.Expression.Part.Ternary): TapeCode {
     let ret = new TapeCode(part);
-    ret.AddContent(0, `$1 if $0 else $2`, part.condition.$Generate(this), part._true.$Generate(this), part._false.$Generate(this));
+    ret.AddContent(0, `$1 if $0 else $2`, part.condition.$Generate(this), part.true.$Generate(this), part.false.$Generate(this));
     return ret;
   }
   ExpressionPart_Relational(part: TapeExpression.Part.Relational): TapeCode {

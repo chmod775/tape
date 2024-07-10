@@ -1,10 +1,7 @@
 import * as Tape from '../../Tape'
 import { TapeStatement } from '../Structure/TapeStatement';
 import { TapeExpression } from '../Structure/TapeExpression';
-import { TapeDefinition } from '../Structure/TapeDefinition';
 import { TapeValue } from '../Structure/TapeValue';
-import { TapeCode } from '../TapeCode';
-import { TapeGenerator } from '../TapeGenerator';
 import { TapeGlue } from '../Structure/TapeGlue';
 import { TapeGlue_List } from './TapeGlue_List';
 

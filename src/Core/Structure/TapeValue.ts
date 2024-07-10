@@ -37,30 +37,42 @@ namespace TapeValue {
   }
 
   export class Symbol extends TapeValue {
-    public def?: TapeAccess;
+    private _def?: TapeAccess;
+    public get def(): TapeAccess | undefined {
+      return this._def;
+    }
 
-    public source?: This | Symbol;
-    public name: String;
+    private _source?: This | Symbol;
+    public get source(): (This | Symbol) | undefined {
+      return this._source;
+    }
+
+    private _name: String;
+    public get name(): String {
+      return this._name;
+    }
   
     constructor(name: String, source?: This | Symbol) {
       super();
-      this.name = name;
-      this.source = source;
+      this._name = name;
+      this._source = source;
     }
 
     $Create(parentScope: TapeScope): (Boolean | String)[] {
       if (this.scope) return [];
       
-      if (this.source) {
-        this.source.$Create(parentScope);
-        parentScope = this.source.scope;
+      if (this._source) {
+        this._source.$Create(parentScope);
+        parentScope = this._source.scope;
       }
 
       let errors: (Boolean | String)[] = [
-        parentScope.Exists(this.name) || `Symbol ${this.name} not defined.`,
+        parentScope.Exists(this._name) || `Symbol ${this._name} not defined.`,
       ];
 
-      var oSource = parentScope.Find(this.name);
+      console.log(parentScope);
+
+      var oSource = parentScope.Find(this._name);
       this.scope = oSource.scope;
 
       return errors;
@@ -76,13 +88,20 @@ namespace TapeValue {
   }
   
   export class Literal extends TapeValue {
-    public baseType?: TapeType;
-    public value: any;
+    private _baseType?: TapeType;
+    public get baseType(): TapeType | undefined {
+      return this._baseType;
+    }
+
+    private _value: any;
+    public get value(): any {
+      return this._value;
+    }
   
     constructor(baseType: TapeType, value: any) {
       super();
-      this.baseType = baseType;
-      this.value = value;
+      this._baseType = baseType;
+      this._value = value;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
@@ -91,13 +110,20 @@ namespace TapeValue {
   }
   
   export class List extends TapeValue {
-    public baseType?: TapeType.List;
-    public values: TapeValue[];
+    private _baseType?: TapeType.List;
+    public get baseType(): TapeType.List | undefined {
+      return this._baseType;
+    }
+
+    private _values: TapeValue[];
+    public get values(): ReadonlyArray<TapeValue> {
+      return this._values;
+    }
   
     constructor(baseType: TapeType, ...values: TapeValue[]) {
       super();
-      this.baseType = new TapeType.List(baseType);
-      this.values = values;
+      this._baseType = new TapeType.List(baseType);
+      this._values = values;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {

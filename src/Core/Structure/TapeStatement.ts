@@ -1,7 +1,5 @@
-import { TapeValue } from './TapeValue';
 import { TapeExpression } from './TapeExpression';
 import { TapeCode } from '../TapeCode';
-import { TapeType } from './TapeType';
 import { TapeDefinition } from './TapeDefinition';
 import { TapeGenerator } from '../TapeGenerator';
 import { TapeScope } from '../TapeScope';
@@ -12,11 +10,14 @@ abstract class TapeStatement extends TapeStructure {
 
 namespace TapeStatement {
   export class Block extends TapeStatement {
-    public items: (TapeExpression | TapeStatement | TapeDefinition)[];
-  
+    private _items: (TapeExpression | TapeStatement | TapeDefinition)[];
+    public get items(): ReadonlyArray<(TapeExpression | TapeStatement | TapeDefinition)> {
+      return this._items;
+    }
+
     constructor(items: (TapeExpression | TapeStatement | TapeDefinition)[]) {
       super();
-      this.items = items;
+      this._items = items;
     }
   
 
@@ -31,21 +32,31 @@ namespace TapeStatement {
   }
   
   export class If extends TapeStatement {
-    public condition: TapeExpression;
-    public ifTrue: TapeStatement | TapeExpression;
-    public ifFalse?: TapeStatement | TapeExpression = undefined;
+    private _condition: TapeExpression;
+    public get condition(): TapeExpression {
+      return this._condition;
+    }
 
+    private _ifTrue: TapeStatement | TapeExpression;
+    public get ifTrue(): TapeStatement | TapeExpression {
+      return this._ifTrue;
+    }
+
+    private _ifFalse?: TapeStatement | TapeExpression = undefined;
+    public get ifFalse(): (TapeStatement | TapeExpression) | undefined {
+      return this._ifFalse;
+    }
 
     constructor(condition: TapeExpression, ifTrue: TapeStatement | TapeExpression) {
       super();
   
-      this.condition = condition;
-      this.ifTrue = (ifTrue instanceof TapeStatement.Block) ? ifTrue : new TapeStatement.Block([ifTrue]);
+      this._condition = condition;
+      this._ifTrue = (ifTrue instanceof TapeStatement.Block) ? ifTrue : new TapeStatement.Block([ifTrue]);
     }
   
     Else(ifFalse: TapeStatement | TapeExpression) : If {
-      if (this.ifFalse != undefined) throw 'Else already defined for If';
-      this.ifFalse = (ifFalse instanceof TapeStatement.Block) ? ifFalse : new TapeStatement.Block([ifFalse]);
+      if (this._ifFalse != undefined) throw 'Else already defined for If';
+      this._ifFalse = (ifFalse instanceof TapeStatement.Block) ? ifFalse : new TapeStatement.Block([ifFalse]);
       return this;
     }
 
@@ -55,22 +66,38 @@ namespace TapeStatement {
   }
 
   export class For extends TapeStatement {
-    public init: TapeDefinition.Variable | TapeExpression;
-    public condition: TapeExpression;
-    public increment: TapeExpression;
-    public loop: TapeStatement | TapeExpression;
+    private _init: TapeDefinition.Variable | TapeExpression;
+    public get init(): TapeDefinition.Variable | TapeExpression {
+      return this._init;
+    }
+
+    private _condition: TapeExpression;
+    public get condition(): TapeExpression {
+      return this._condition;
+    }
+
+    private _increment: TapeExpression;
+    public get increment(): TapeExpression {
+      return this._increment;
+    }
+
+    private _loop?: TapeStatement | TapeExpression;
+    public get loop(): (TapeStatement | TapeExpression) {
+      if (this._loop == undefined) throw `Loop is not defined for 'For' statement`;
+      return this._loop;
+    }
 
     constructor(init: TapeDefinition.Variable | TapeExpression, condition: TapeExpression, increment: TapeExpression) {
       super();
   
-      this.init = init;
-      this.condition = condition;
-      this.increment = increment;
+      this._init = init;
+      this._condition = condition;
+      this._increment = increment;
     }
   
     Loop(loop: TapeStatement | TapeExpression) : For {
-      if (this.loop != undefined) throw 'Loop already defined for For';
-      this.loop = (loop instanceof TapeStatement.Block) ? loop : new TapeStatement.Block([loop]);
+      if (this._loop != undefined) throw 'Loop already defined for For';
+      this._loop = (loop instanceof TapeStatement.Block) ? loop : new TapeStatement.Block([loop]);
       return this;
     }
 
@@ -87,11 +114,14 @@ namespace TapeStatement {
   }
 
   export class Return extends TapeStatement {
-    public expression: TapeExpression;
+    private _expression: TapeExpression;
+    public get expression(): TapeExpression {
+      return this._expression;
+    }
 
     constructor(expression: TapeExpression) {
       super();
-      this.expression = expression;
+      this._expression = expression;
     }
 
     $Generate(generator: TapeGenerator): TapeCode {

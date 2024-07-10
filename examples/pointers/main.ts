@@ -34,18 +34,26 @@ let Function_Loop = Tape.Function('Function_Loop', Tape.Type.Primitive.Bool)
     Tape.Return(Tape.Expression.Value(Tape.Value.Symbol('rlo')))
   ]);
 
+let Function_Main = Tape.Function('main', Tape.Type.Primitive.Void)
+  .Content([
+    Tape.Variable('motors', Tape.Type.Custom(Struct_Loop_Instance)),
+    Tape.Function.Invoke(Tape.Value.Symbol('Function_Loop'), [ Tape.Expression.Value(Tape.Value.Literal(true)), Tape.Expression.Value(Tape.Value.Symbol('motors').Access('Motor_A')) ]),
+    Tape.Function.Invoke(Tape.Value.Symbol('Function_Loop'), [ Tape.Expression.Value(Tape.Value.Literal(true)), Tape.Expression.Value(Tape.Value.Symbol('motors').Access('Motor_B')) ])
+  
+  ]);
 
-let mainBlock = new Tape.File([
+let mainFile = Tape.File([
   ],[
   
   Struct_Motor,
   Struct_Loop_Instance,
 
   Function_Loop,
+  Function_Main
+]);
 
-  Tape.Variable('motors', Tape.Type.Custom(Struct_Loop_Instance)),
-  Tape.Function.Invoke(Tape.Value.Symbol('Function_Loop'), [ Tape.Expression.Value(Tape.Value.Literal(true)), Tape.Expression.Value(Tape.Value.Symbol('motors').Access('Motor_A')) ]),
-  Tape.Function.Invoke(Tape.Value.Symbol('Function_Loop'), [ Tape.Expression.Value(Tape.Value.Literal(true)), Tape.Expression.Value(Tape.Value.Symbol('motors').Access('Motor_B')) ])
+let prj = Tape.Project([
+  mainFile
 ]);
 
 // let genJS = new GeneratorJS();
@@ -73,11 +81,11 @@ let mainBlock = new Tape.File([
 // fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.py')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.py'), genOutPY_Source as string))
 
 let genC = new GeneratorC();
-let genOutC = mainBlock.$Generate(genC);
+let genOutC = mainFile.$Generate(genC);
 
-let rootScope = new TapeScope(mainBlock);
-let errors = genOutC.Create(rootScope);
-console.error(errors.filter(e => e != true));
+// let rootScope = new TapeScope(mainFile);
+// let errors = genOutC.Create(rootScope);
+// console.error(errors.filter(e => e != true));
 
 let genOutC_Source = genOutC.ToSource();
 console.log('##### C #####');

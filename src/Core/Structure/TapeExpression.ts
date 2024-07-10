@@ -2,20 +2,21 @@ import { TapeGenerator } from '../TapeGenerator';
 import { TapeValue } from './TapeValue';
 import { TapeCode } from '../TapeCode';
 import { TapeStructure } from '../TapeStructure';
-import { TapeScope } from '../TapeScope';
-import { TapeDefinition } from './TapeDefinition';
 
 class TapeExpression extends TapeStructure {
-  part: TapeExpression.Part;
+  private _part: TapeExpression.Part;
+  public get part(): TapeExpression.Part {
+    return this._part;
+  }
 
   constructor(part: TapeExpression.Part) {
     super();
-    this.part = part;
+    this._part = part;
   }
   
   $Generate(generator: TapeGenerator) : TapeCode {
     let ret = new TapeCode(this);
-    ret.AddContent(0, '$0', this.part.$Generate(generator));
+    ret.AddContent(0, '$0', this._part.$Generate(generator));
     return ret;
   }
 }
@@ -26,11 +27,14 @@ namespace TapeExpression {
 
   export namespace Part {
     export class Value extends Part {
-      value: TapeValue;
+      private _value: TapeValue;
+      public get value(): TapeValue {
+        return this._value;
+      }
 
       constructor(value: TapeValue) {
         super();
-        this.value = value;
+        this._value = value;
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -39,15 +43,26 @@ namespace TapeExpression {
     }
 
     export class Binary extends Part {
-      left: TapeExpression;
-      operator: BinaryOperators;
-      right: TapeExpression;
+      private _left: TapeExpression;
+      public get left(): TapeExpression {
+        return this._left;
+      }
+
+      private _operator: BinaryOperators;
+      public get operator(): BinaryOperators {
+        return this._operator;
+      }
+
+      private _right: TapeExpression;
+      public get right(): TapeExpression {
+        return this._right;
+      }
 
       constructor(left: TapeValue | TapeExpression, operator: BinaryOperators, right: TapeValue | TapeExpression) {
         super();
-        this.left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
-        this.operator = operator;
-        this.right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
+        this._left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
+        this._operator = operator;
+        this._right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -56,13 +71,24 @@ namespace TapeExpression {
     }
 
     export class Ternary extends Part {
-      condition: TapeExpression;
-      _true: TapeExpression;
-      _false: TapeExpression;
+      private _condition: TapeExpression;
+      public get condition(): TapeExpression {
+        return this._condition;
+      }
+
+      private _true: TapeExpression;
+      public get true(): TapeExpression {
+        return this._true;
+      }
+
+      private _false: TapeExpression;
+      public get false(): TapeExpression {
+        return this._false;
+      }
 
       constructor(condition: TapeExpression, _true: TapeValue | TapeExpression, _false: TapeValue | TapeExpression) {
         super();
-        this.condition = condition;
+        this._condition = condition;
         this._true = (_true instanceof TapeExpression) ? _true : TapeExpression.Value(_true as TapeValue);
         this._false = (_false instanceof TapeExpression) ? _false : TapeExpression.Value(_false as TapeValue);
       }
@@ -73,15 +99,26 @@ namespace TapeExpression {
     }
 
     export class Relational extends Part {
-      left: TapeExpression;
-      operator: RelationalOperators;
-      right: TapeExpression;
+      private _left: TapeExpression;
+      public get left(): TapeExpression {
+        return this._left;
+      }
+
+      private _operator: RelationalOperators;
+      public get operator(): RelationalOperators {
+        return this._operator;
+      }
+
+      private _right: TapeExpression;
+      public get right(): TapeExpression {
+        return this._right;
+      }
 
       constructor(left: TapeValue | TapeExpression, operator: RelationalOperators, right: TapeValue | TapeExpression) {
         super();
-        this.left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
-        this.operator = operator;
-        this.right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
+        this._left = (left instanceof TapeExpression) ? left : TapeExpression.Value(left as TapeValue);
+        this._operator = operator;
+        this._right = (right instanceof TapeExpression) ? right : TapeExpression.Value(right as TapeValue);
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -90,13 +127,20 @@ namespace TapeExpression {
     }
 
     export class Assign extends Part {
-      target: TapeValue.Symbol;
-      value: TapeExpression;
+      private _target: TapeValue.Symbol;
+      public get target(): TapeValue.Symbol {
+        return this._target;
+      }
+
+      private _value: TapeExpression;
+      public get value(): TapeExpression {
+        return this._value;
+      }
 
       constructor(target: TapeValue.Symbol, value: TapeExpression) {
         super();
-        this.target = target;
-        this.value = value;
+        this._target = target;
+        this._value = value;
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -105,13 +149,20 @@ namespace TapeExpression {
     }
 
     export class Invoke extends Part {
-      target: TapeValue.Symbol;
-      args: TapeExpression[];
+      private _target: TapeValue.Symbol;
+      public get target(): TapeValue.Symbol {
+        return this._target;
+      }
+
+      private _args: TapeExpression[];
+      public get args(): ReadonlyArray<TapeExpression> {
+        return this._args;
+      }
 
       constructor(target: TapeValue.Symbol, args: TapeExpression[]) {
         super();
-        this.target = target;
-        this.args = args;
+        this._target = target;
+        this._args = args;
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -120,13 +171,20 @@ namespace TapeExpression {
     }
 
     export class New extends Part {
-      target: TapeValue.Symbol;
-      args: TapeExpression[];
+      private _target: TapeValue.Symbol;
+      public get target(): TapeValue.Symbol {
+        return this._target;
+      }
+
+      private _args: TapeExpression[];
+      public get args(): ReadonlyArray<TapeExpression> {
+        return this._args;
+      }
 
       constructor(target: TapeValue.Symbol, args: TapeExpression[]) {
         super();
-        this.target = target;
-        this.args = args;
+        this._target = target;
+        this._args = args;
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -135,13 +193,20 @@ namespace TapeExpression {
     }
 
     export class Index extends Part {
-      target: TapeExpression;
-      index: TapeExpression;
+      private _target: TapeExpression;
+      public get target(): TapeExpression {
+        return this._target;
+      }
+
+      private _index: TapeExpression;
+      public get index(): TapeExpression {
+        return this._index;
+      }
 
       constructor(target: TapeExpression, index: TapeExpression) {
         super();
-        this.target = target;
-        this.index = index;
+        this._target = target;
+        this._index = index;
       }
 
       $Generate(generator: TapeGenerator): TapeCode {
@@ -172,7 +237,7 @@ namespace TapeExpression {
   }
 
   export function Parse(expression: String) : TapeExpression {
-    return undefined;
+    throw 'Not implemented';
   }
 
   export function Empty(part: TapeExpression.Part): TapeExpression {

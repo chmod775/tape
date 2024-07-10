@@ -3,13 +3,20 @@ import { TapeGenerator } from "../TapeGenerator";
 import { TapeStructure } from "../TapeStructure";
 
 class TapeInclude extends TapeStructure {
-  public name: String;
-  public path?: String;
+  private _name: String;
+  public get name(): String {
+    return this._name;
+  }
+
+  private _path?: String;
+  public get path(): String | undefined {
+    return this._path;
+  }
 
   constructor(name: String, path?: String) {
     super();
-    this.name = name;
-    this.path = path;
+    this._name = name;
+    this._path = path;
   }
 
   $Generate(generator: TapeGenerator): TapeCode {

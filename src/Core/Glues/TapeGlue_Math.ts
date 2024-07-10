@@ -1,6 +1,4 @@
 import { TapeExpression } from '../Structure/TapeExpression';
-import * as Tape from '../../Tape'
-import { TapeValue } from '../Structure/TapeValue';
 import { TapeInclude } from '../Structure/TapeInclude';
 import { TapeGlue } from '../Structure/TapeGlue';
 

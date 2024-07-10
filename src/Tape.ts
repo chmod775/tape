@@ -3,10 +3,12 @@ import { TapeValue } from './Core/Structure/TapeValue';
 import { TapeStatement } from './Core/Structure/TapeStatement';
 import { TapeExpression } from './Core/Structure/TapeExpression';
 import { TapeCode } from './Core/TapeCode';
+import { TapeProject } from './Core/TapeProject';
 import { TapeType } from './Core/Structure/TapeType';
 import { TapeDefinition } from './Core/Structure/TapeDefinition';
 import { TapeFile } from './Core/Structure/TapeFile';
 import { TapeInclude } from './Core/Structure/TapeInclude';
+import { TapeStructure } from './Core/TapeStructure';
 
 export function Block(defs: TapeStatement[] | TapeDefinition[]) : TapeStatement.Block {
   return new TapeStatement.Block(defs);
@@ -120,10 +122,17 @@ export function Include(name: String, path?: String): TapeInclude {
   return new TapeInclude(name, path);
 }
 
+export function File(includes: TapeStructure[], defs: (TapeStructure)[]): TapeFile {
+  return new TapeFile(includes, defs);
+}
+
+export function Project(files: TapeFile[]): TapeProject {
+  return new TapeProject(files);
+}
+
 export { TapeExpression as Expression };
 export { TapeGenerator as Generator };
 export { TapeCode as Code };
-export { TapeFile as File };
 
 import { GeneratorJS } from './Generators/GeneratorJS';
 import { GeneratorCS } from './Generators/GeneratorCS';

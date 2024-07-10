@@ -26,11 +26,14 @@ namespace TapeType {
   }
   
   export class Primitive extends TapeType {
-    public code: _PrimitiveCodes;
-  
+    private _code: _PrimitiveCodes;
+    public get code(): _PrimitiveCodes {
+      return this._code;
+    }
+
     constructor(code: _PrimitiveCodes) {
       super();
-      this.code = code;
+      this._code = code;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
@@ -39,11 +42,14 @@ namespace TapeType {
   }
   
   export class List extends TapeType {
-    public baseType: TapeType;
-  
+    private _baseType: TapeType;
+    public get baseType(): TapeType {
+      return this._baseType;
+    }
+
     constructor(baseType: TapeType) {
       super();
-      this.baseType = baseType;
+      this._baseType = baseType;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
@@ -52,11 +58,14 @@ namespace TapeType {
   }
 
   export class Class extends TapeType {
-    public def: TapeDefinition.Class;
+    private _def: TapeDefinition.Class;
+    public get def(): TapeDefinition.Class {
+      return this._def;
+    }
 
     constructor(def: TapeDefinition.Class) {
       super();
-      this.def = def;
+      this._def = def;
     }
   
     $Generate(generator: TapeGenerator): TapeCode {
@@ -65,15 +74,18 @@ namespace TapeType {
   }
 
   export class Custom extends TapeType {
-    public def: TapeDefinition.CustomType;
+    private _def: TapeDefinition.CustomType;
+    public get def(): TapeDefinition.CustomType {
+      return this._def;
+    }
 
     constructor(def: TapeDefinition.CustomType) {
       super();
-      this.def = def;
+      this._def = def;
     }
   
     $Create(parentScope: TapeScope): (Boolean | String)[] {
-      this.scope = this.def.scope;
+      this.scope = this._def.scope;
       return this.$Validate();
     }
 

@@ -3,14 +3,21 @@ import { TapeGenerator } from "./TapeGenerator";
 import { TapeScope } from "./TapeScope";
 
 abstract class TapeStructure {
-  public scope: TapeScope;
+  private _scope?: TapeScope;
+  public get scope(): TapeScope {
+    if (this._scope == undefined) throw 'Scope is not defined!';
+    return this._scope;
+  }
+  public set scope(value: TapeScope) {
+    this._scope = value;
+  }
 
   $Validate(): (Boolean | String)[] {
     return [];
   }
 
   $Create(parentScope: TapeScope): (Boolean | String)[] {
-    this.scope = parentScope;
+    this._scope = parentScope;
     return this.$Validate();
   }
 

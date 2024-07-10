@@ -9,11 +9,14 @@ import { TapeStructure } from '../TapeStructure';
 import { TapeAccess } from '../Interfaces/TapeAccess';
 
 abstract class TapeDefinition extends TapeStructure {
-  public name: String;
-  
+  private _name: String;
+  public get name(): String {
+    return this._name;
+  }
+
   constructor(name: String) {
     super();
-    this.name = name;
+    this._name = name;
   }
 
   abstract $Generate(generator: TapeGenerator) : TapeCode;
@@ -21,22 +24,29 @@ abstract class TapeDefinition extends TapeStructure {
 
 namespace TapeDefinition {
   export class Variable extends TapeDefinition {
-    public type: TapeType;
-    public init?: TapeExpression;
-  
+    private _type: TapeType;
+    public get type(): TapeType {
+      return this._type;
+    }
+
+    private _init?: TapeExpression;
+    public get init(): TapeExpression | undefined {
+      return this._init;
+    }
+
     constructor(name: String, type: TapeType) {
       super(name);
-      this.type = type;
+      this._type = type;
     }
   
     InitializeWithValue<T extends this>(value: TapeValue.Literal | TapeValue.List) : T {
-      value.baseType = this.type;
-      this.init = new TapeExpression(new TapeExpression.Part.Value(value));
+      value.baseType = this._type;
+      this._init = new TapeExpression(new TapeExpression.Part.Value(value));
       return this as T;
     }
   
     InitializeWithExpression<T extends this>(value: TapeExpression) : T {
-      this.init = value;
+      this._init = value;
       return this as T;
     }
 
@@ -51,19 +61,22 @@ namespace TapeDefinition {
 
       parentScope.Add(this);
       
-      this.type.$Create(parentScope);
-      this.scope = this.type.scope;
+      this._type.$Create(parentScope);
+      this.scope = this._type.scope;
 
       return errors;
     }
   }
 
   export class CustomType extends TapeDefinition {
-    public items: CustomType.Item[];
+    private _items: CustomType.Item[];
+    public get items(): ReadonlyArray<CustomType.Item> {
+      return this._items;
+    }
 
     constructor(name: String, items: CustomType.Item[]) {
       super(name);
-      this.items = items;
+      this._items = items;
     }
 
     $Create(parentScope: TapeScope): (Boolean | String)[] {
@@ -84,8 +97,11 @@ namespace TapeDefinition {
   }
   export namespace CustomType {
     export class Item extends Variable {
-      public owner: CustomType;
-  
+      private _owner?: CustomType;
+      public get owner(): CustomType {
+        return this.owner;
+      }
+
       $Generate(generator: TapeGenerator): TapeCode {
         return generator.CustomType_Item(this);
       }
@@ -93,10 +109,17 @@ namespace TapeDefinition {
   }
 
   export class Function extends TapeDefinition {
-    public returnType: TapeType;
-    public arguments: Function.Argument[] = [];
+    private _returnType: TapeType;
+    public get returnType(): TapeType {
+      return this._returnType;
+    }
 
-    public _content?: TapeStatement.Block;
+    private _arguments: Function.Argument[] = [];
+    public get arguments(): ReadonlyArray<Function.Argument> {
+      return this._arguments;
+    }
+
+    private _content?: TapeStatement.Block;
     public get content(): TapeStatement.Block {
       if (!this._content) throw `Cannot access null content`;
       return this._content;
@@ -104,12 +127,12 @@ namespace TapeDefinition {
 
     constructor(name: String, returnType: TapeType = TapeType.Primitive.Void, args?: Function.Argument[]) {
       super(name);
-      this.returnType = returnType;
-      this.arguments = args ?? [];
+      this._returnType = returnType;
+      this._arguments = args ?? [];
     }
 
     Arguments<T extends this>(...args: Function.Argument[]): T {
-      this.arguments.push(...args);
+      this._arguments.push(...args);
       return this as T;
     }
 
@@ -125,7 +148,7 @@ namespace TapeDefinition {
 
       parentScope.Add(this);
 
-      let defs = this.arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
+      let defs = this._arguments.filter(t => t instanceof TapeDefinition) as TapeDefinition[];
       this.scope = new TapeScope(this, parentScope, defs);
 
       return errors;
@@ -137,22 +160,29 @@ namespace TapeDefinition {
   }
   export namespace Function {
     export class Argument extends TapeDefinition {
-      public type: TapeType;
-      public IsReadWrite: boolean = false;
+      private _type: TapeType;
+      public get type(): TapeType {
+        return this._type;
+      }
+
+      private _IsReadWrite: boolean = false;
+      public get IsReadWrite(): boolean {
+        return this._IsReadWrite;
+      }
 
       constructor(name: String, type: TapeType) {
         super(name);
-        this.type = type;
+        this._type = type;
       }
 
       public AsReadWrite(): Function.Argument {
-        this.IsReadWrite = true;
+        this._IsReadWrite = true;
         return this;
       }
       
       $Create(parentScope: TapeScope): (Boolean | String)[] {
-        this.type.$Create(parentScope);
-        this.scope = this.type.scope;
+        this._type.$Create(parentScope);
+        this.scope = this._type.scope;
         return this.$Validate();
       }
 
@@ -163,19 +193,34 @@ namespace TapeDefinition {
   }
 
   export class Class extends TapeDefinition implements TapeAccess {
-    public parent?: Class;
-    public fields: Class.Field[] = [];
-    public constructors: Class.Method[] = [];
-    public methods: Class.Method[] = [];
+    private _parent?: Class;
+    public get parent(): Class | undefined {
+      return this._parent;
+    }
+
+    private _fields: Class.Field[] = [];
+    public get fields(): ReadonlyArray<Class.Field> {
+      return this._fields;
+    }
+
+    private _constructors: Class.Method[] = [];
+    public get constructors(): ReadonlyArray<Class.Method> {
+      return this._constructors;
+    }
+
+    private _methods: Class.Method[] = [];
+    public get methods(): ReadonlyArray<Class.Method> {
+      return this._methods;
+    }
 
     constructor(name: String, parent?: Class) {
       super(name);
-      this.parent = parent;
+      this._parent = parent;
     }
 
     Access(name: String): TapeDefinition {
-      let foundField = this.fields.filter(t => t.name == name)[0];
-      let foundMethod = this.methods.filter(t => t.name == name)[0];
+      let foundField = this._fields.filter(t => t.name == name)[0];
+      let foundMethod = this._methods.filter(t => t.name == name)[0];
       return foundField ?? foundMethod;
     }
 
@@ -192,17 +237,17 @@ namespace TapeDefinition {
     }
 
     Constructors(constructors: Class.Method[]): Class {
-      this.constructors = constructors;
+      this._constructors = constructors;
       return this;
     }
 
     Fields(fields: Class.Field[]): Class {
-      this.fields = fields;
+      this._fields = fields;
       return this;
     }
 
     Methods(methods: Class.Method[]): Class {
-      this.methods = methods;
+      this._methods = methods;
       return this;
     }
 
@@ -212,8 +257,11 @@ namespace TapeDefinition {
   }
   export namespace Class {
     export class Method extends Function {
-      public owner: Class;
-  
+      private _owner?: Class;
+      public get owner(): Class | undefined {
+        return this._owner;
+      }
+
       $Create(parentScope: TapeScope): (Boolean | String)[] {
         let errors: (Boolean | String)[] = [
           !parentScope.ExistsLocal(this.name) || `Method name ${this.name} already defined.`,
@@ -233,8 +281,11 @@ namespace TapeDefinition {
     }
   
     export class Field extends Variable {
-      public owner: Class;
-  
+      private _owner?: Class;
+      public get owner(): Class | undefined {
+        return this._owner;
+      }
+
       $Create(parentScope: TapeScope): (Boolean | String)[] {
         let errors: (Boolean | String)[] = [
           !parentScope.ExistsLocal(this.name) || `Field name ${this.name} already defined.`,
