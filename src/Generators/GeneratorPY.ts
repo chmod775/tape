@@ -50,6 +50,13 @@ export class GeneratorPY extends TapeGenerator {
   Type_Class(type: TapeType.Class): TapeCode {
     throw new Error('Method not implemented.');
   }
+  Type_Custom(type: TapeType.Custom): Tape.Code {
+    let ret = new TapeCode(type);
+    return ret;
+  }
+  Type_Dictionary(type: TapeType.List): TapeCode {
+    throw new Error('Method not implemented.');
+  }
 
   This(part: TapeValue.This): TapeCode {
     let ret = new TapeCode(part);
@@ -79,6 +86,27 @@ export class GeneratorPY extends TapeGenerator {
   List(value: TapeValue.List): TapeCode {
     let ret = new TapeCode(value);
     ret.AddContent(0, '[$,0]', value.values.map(v => v.$Generate(this)));
+    return ret;
+  }
+  Dictionary(value: TapeValue.Dictionary): TapeCode {
+    let ret = new TapeCode(value);
+    
+    ret.AddContent(0, '{');
+
+    let keys = Object.keys(value.values);
+    let lastKey = keys[keys.length - 1];
+    for (let item_key of keys) {
+      let item_value = value.values[item_key];
+      let gen = item_value.$Generate(this);
+
+      if (item_key == lastKey)
+        ret.AddContent(1, `"${item_key}": $0`, gen);
+      else
+        ret.AddContent(1, `"${item_key}": $0,`, gen);
+    }
+
+    ret.AddContent(0, '}');
+
     return ret;
   }
 
@@ -124,6 +152,15 @@ export class GeneratorPY extends TapeGenerator {
     return ret;
   }
 
+  CustomType(definition: TapeDefinition.CustomType): Tape.Code {
+    let ret = new TapeCode(definition);
+    return ret;
+  }
+  CustomType_Item(definition: TapeDefinition.CustomType.Item): Tape.Code {
+    let ret = new TapeCode(definition);
+    return ret;
+  }
+
   FunctionArgument(definition: TapeDefinition.Function.Argument): TapeCode {
     let ret = new TapeCode(definition);
     ret.AddContent(0, `${definition.name}`);
@@ -158,7 +195,7 @@ export class GeneratorPY extends TapeGenerator {
       // Create __init method to be called in every constructor
       let initFnContent: TapeExpression[] = [];
       for (let f of initializedFields) {
-        initFnContent.push(TapeExpression.Assignment((new TapeValue.This()).Access(`${f.name}`), f.init))
+        initFnContent.push(TapeExpression.Assignment(TapeExpression.Value((new TapeValue.This()).Access(`${f.name}`)), f.init))
       }
 
       let initFn = new TapeDefinition.Function('__init').Content(initFnContent);

@@ -29,10 +29,10 @@ namespace TapeGlue_ForLoops {
       return Tape.For(
         Tape.Variable(iteratorIndexName, Tape.Type.Primitive.Int32).InitializeWithValue(Tape.Value.Literal(0)),
         Tape.Expression.Relational(Tape.Value.Symbol(iteratorIndexName), Tape.Expression.RelationalOperators.Less, new TapeGlue_List.Length(this.source)),
-        Tape.Expression.Assignment(Tape.Value.Symbol(iteratorIndexName), Tape.Expression.Binary(Tape.Value.Symbol(iteratorIndexName), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(1)))
+        Tape.Expression.Assignment(TapeExpression.Value(Tape.Value.Symbol(iteratorIndexName)), Tape.Expression.Binary(Tape.Value.Symbol(iteratorIndexName), Tape.Expression.BinaryOperators.Add, Tape.Value.Literal(1)))
       )
       .Loop(Tape.Block([
-        Tape.Expression.Assignment(this.iterator, Tape.Expression.Index(Tape.Expression.Value(this.source), Tape.Expression.Value(Tape.Value.Symbol(iteratorIndexName)))),
+        Tape.Expression.Assignment(TapeExpression.Value(this.iterator), Tape.Expression.Index(Tape.Expression.Value(this.source), Tape.Expression.Value(Tape.Value.Symbol(iteratorIndexName)))),
         ...loopItems
       ]));
     }

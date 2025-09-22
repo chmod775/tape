@@ -104,6 +104,21 @@ namespace TapeValue {
       return generator.List(this);
     }
   }
+
+  export class Dictionary extends TapeValue {
+    public baseType?: TapeType.Dictionary;
+    public values: { [key: string]: TapeValue };
+
+    constructor(baseType: TapeType, values: { [key: string]: TapeValue }) {
+      super();
+      this.baseType = new TapeType.Dictionary(baseType);
+      this.values = values;
+    }
+  
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.Dictionary(this);
+    }
+  }
 }
 
 export { TapeValue as TapeValue };

@@ -43,6 +43,9 @@ export class GeneratorC extends TapeGenerator {
   Type_List(type: TapeType.List): TapeCode {
     throw 'C Generator does not include default List';
   }
+  Type_Dictionary(type: TapeType.Dictionary): TapeCode {
+    throw 'C Generator does not include default Dictionary';
+  }
   Type_Class(type: TapeType.Class): TapeCode {
     throw new Error('Method not implemented.');
   }
@@ -74,6 +77,9 @@ export class GeneratorC extends TapeGenerator {
   }
   List(value: TapeValue.List): TapeCode {
     throw 'C Generator does not include default List';
+  }
+  Dictionary(value: TapeValue.Dictionary): TapeCode {
+    throw 'C Generator does not include default Dictionary';
   }
 
   Block(statement: TapeStatement.Block): TapeCode {

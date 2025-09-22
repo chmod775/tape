@@ -98,6 +98,10 @@ export class Value {
   static List(baseType: TapeType, ...values: TapeValue[]) : TapeValue.List {
     return new TapeValue.List(baseType, ...values);
   }
+
+  static Dictionary(baseType: TapeType, values: { [key: string]: TapeValue }) : TapeValue.Dictionary {
+    return new TapeValue.Dictionary(baseType, values);
+  }
 }
 
 export class Type {
@@ -113,6 +117,10 @@ export class Type {
 
   static List(baseType: TapeType) : TapeType.List {
     return new TapeType.List(baseType);
+  }
+
+  static Dictionary(baseType: TapeType) : TapeType.Dictionary {
+    return new TapeType.Dictionary(baseType);
   }
 }
 

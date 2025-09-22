@@ -5,7 +5,7 @@ class Code {
   source: TapeStructure;
   parts: Code.Part[] = [];
 
-  constructor(source: TapeStructure, content?: Code | Code.Content, indent: Number = 0) {
+  constructor(source: TapeStructure, content?: Code | Code.Content, indent: number = 0) {
     this.source = source;
     if (content != undefined) {
       if (content instanceof Code)
@@ -15,16 +15,16 @@ class Code {
     }
   }
 
-  AddContent(indent: Number, template: String, ...placeholders: (Code | Code[])[]) {
+  AddContent(indent: number, template: String, ...placeholders: (Code | Code[])[]) {
     let content = new Code.Content(template, placeholders);
     this.parts.push(new Code.Part(content, indent));
   }
 
-  AddCode(indent: Number, code: Code): void {
+  AddCode(indent: number, code: Code): void {
     this.parts.push(new Code.Part(code, indent));
   }
 
-  Content(indent: Number = 0): String[] {
+  Content(indent: number = 0): String[] {
     let ret: String[] = [];
     this.parts.map(l => l.Content(indent)).forEach(l => ret.push(...l));
     return ret;
@@ -32,6 +32,7 @@ class Code {
 
   ToSource(): String {
     let lines = this.Content();
+    console.log(lines);
     return lines.join('\n');
   }
 
@@ -58,7 +59,7 @@ namespace Code {
       this.placeholders = placeholders;
     }
 
-    Content(): String {
+    Content(indent: number = 0): String {
       let reg : RegExp = /\$(\D*)(\d+)/g;
       let ret = this.template.replace(reg, (substring: string, ...args: any[]): string => {
         let separator = args[0];
@@ -68,7 +69,7 @@ namespace Code {
         if (isJoined)
           return (this.placeholders[index] as Code[]).map(p => p.Content()[0]).join(separator) as string;
 
-        return (this.placeholders[index] as Code).Content()[0] as string
+        return (this.placeholders[index] as Code).Content(indent).join('\n') as string
       });
       return ret;
     }
@@ -88,11 +89,11 @@ namespace Code {
   }
 
   export class Part {
-    indent: Number;
+    indent: number;
     content?: Content;
     code?: Code;
 
-    constructor(item: Content | Code, indent?: Number) {
+    constructor(item: Content | Code, indent?: number) {
       if (item instanceof Code)
         this.code = item as Code;
       else
@@ -112,12 +113,13 @@ namespace Code {
       return ret;
     }
 
-    Content(indent: Number): String[] {
+    Content(indent: number): String[] {
       let ret: String[] = [];
       if (this.content) {
-        ret.push(' '.repeat(+this.indent) + this.content.Content());
+        let contentLines = this.content.Content(this.indent).split('\n').map(l => ' '.repeat(+this.indent) + l);
+        ret.push(...contentLines);
       } else {
-        let codeLines = this.code.Content(this.indent).map(l => ' '.repeat(+this.indent) + l);
+        let codeLines = this.code.Content(indent).map(l => ' '.repeat(+this.indent) + l);
         ret.push(...codeLines);
       }
 

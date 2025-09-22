@@ -90,10 +90,10 @@ namespace TapeExpression {
     }
 
     export class Assign extends Part {
-      target: TapeValue.Symbol;
+      target: TapeExpression;
       value: TapeExpression;
 
-      constructor(target: TapeValue.Symbol, value: TapeExpression) {
+      constructor(target: TapeExpression, value: TapeExpression) {
         super();
         this.target = target;
         this.value = value;
@@ -199,7 +199,7 @@ namespace TapeExpression {
     );
   }
 
-  export function Assignment(target: TapeValue.Symbol, value: TapeExpression) : TapeExpression {
+  export function Assignment(target: TapeExpression, value: TapeExpression) : TapeExpression {
     return new TapeExpression(
       new Part.Assign(target, value)
     );

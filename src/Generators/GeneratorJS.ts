@@ -52,6 +52,9 @@ export class GeneratorJS extends TapeGenerator {
     let ret = new TapeCode(type);
     return ret;
   }
+  Type_Dictionary(type: TapeType.List): TapeCode {
+    throw new Error('Method not implemented.');
+  }
 
   This(part: TapeValue.This): TapeCode {
     let ret = new TapeCode(part);
@@ -78,6 +81,16 @@ export class GeneratorJS extends TapeGenerator {
   List(value: TapeValue.List): TapeCode {
     let ret = new TapeCode(value);
     ret.AddContent(0, '[$,0]', value.values.map(v => v.$Generate(this)));
+    return ret;
+  }
+  Dictionary(value: TapeValue.Dictionary): TapeCode {
+    let ret = new TapeCode(value);
+    
+    for (let item_key in value.values) {
+      let item_value = value.values[item_key];
+      ret.AddContent(0, `{"${item_key}", $1}`, item_value.$Generate(this));
+    }
+
     return ret;
   }
 
@@ -183,7 +196,7 @@ export class GeneratorJS extends TapeGenerator {
       // Create __init method to be called in every constructor
       let initFnContent: TapeExpression[] = [];
       for (let f of initializedFields) {
-        initFnContent.push(TapeExpression.Assignment((new TapeValue.This()).Access(`${f.name}`), f.init))
+        initFnContent.push(TapeExpression.Assignment(TapeExpression.Value((new TapeValue.This()).Access(`${f.name}`)), f.init))
       }
 
       let initFn = new TapeDefinition.Function('__init').Content(initFnContent);

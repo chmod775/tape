@@ -66,8 +66,17 @@ export class GeneratorCS extends TapeGenerator {
     ret.AddContent(0, `List<$0>`, type.baseType.$Generate(this))
     return ret;
   }
+  Type_Dictionary(type: TapeType.Dictionary): TapeCode {
+    let ret = new TapeCode(type);
+    ret.AddContent(0, `Dictionary<String, $0>`, type.baseType.$Generate(this))
+    return ret;
+  }
   Type_Class(type: TapeType.Class): TapeCode {
     throw new Error('Method not implemented.');
+  }
+  Type_Custom(type: TapeType.Custom): Tape.Code {
+    let ret = new TapeCode(type);
+    return ret;
   }
 
   This(part: TapeValue.This): TapeCode {
@@ -95,6 +104,16 @@ export class GeneratorCS extends TapeGenerator {
   List(value: TapeValue.List): TapeCode {
     let ret = new TapeCode(value);
     ret.AddContent(0, 'new $0($,1){$,2}', value.baseType.$Generate(this), value.values.map(v => v.$Generate(this)), value.values.map(t => t.$Generate(this)));
+    return ret;
+  }
+  Dictionary(value: TapeValue.Dictionary): TapeCode {
+    let ret = new TapeCode(value);
+    
+    for (let item_key in value.values) {
+      let item_value = value.values[item_key];
+      ret.AddContent(0, `{"${item_key}", $1}`, item_value.$Generate(this));
+    }
+
     return ret;
   }
 
@@ -144,6 +163,20 @@ export class GeneratorCS extends TapeGenerator {
   Return(part: TapeStatement.Return): TapeCode {
     let ret = new TapeCode(part);
     ret.AddContent(0, 'return $0;', part.expression.$Generate(this));
+    return ret;
+  }
+
+  CustomType(definition: TapeDefinition.CustomType): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `struct ${definition.name} {`);
+    for (let item of definition.items)
+      ret.AddContent(1, `$0`, item.$Generate(this));
+    ret.AddContent(0, `};`);
+    return ret;
+  }
+  CustomType_Item(definition: TapeDefinition.CustomType.Item): Tape.Code {
+    let ret = new TapeCode(definition);
+    ret.AddContent(0, `$0 ${definition.name};`, definition.type.$Generate(this));
     return ret;
   }
 

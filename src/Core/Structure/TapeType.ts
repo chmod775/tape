@@ -51,6 +51,19 @@ namespace TapeType {
     }
   }
 
+  export class Dictionary extends TapeType {
+    public baseType: TapeType;
+  
+    constructor(baseType: TapeType) {
+      super();
+      this.baseType = baseType;
+    }
+  
+    $Generate(generator: TapeGenerator): TapeCode {
+      return generator.Type_Dictionary(this);
+    }
+  }
+
   export class Class extends TapeType {
     public def: TapeDefinition.Class;
 
