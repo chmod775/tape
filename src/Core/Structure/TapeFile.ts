@@ -1,10 +1,17 @@
+import { TapeErrorReporter } from "../Interfaces/TapeErrorReporter";
 import { TapeCode } from "../TapeCode";
+import { TapeErrors } from "../TapeErrors";
 import { TapeGenerator } from "../TapeGenerator";
 import { TapeScope } from "../TapeScope";
 import { TapeStructure } from "../TapeStructure";
 import { TapeDefinition } from "./TapeDefinition";
 
-class TapeFile extends TapeStructure {
+class TapeFile extends TapeStructure implements TapeErrorReporter {
+  private _name: String;
+  public get name(): String {
+    return this._name;
+  }
+
   private _includes: TapeStructure[] = [];
   public get includes(): ReadonlyArray<TapeStructure> {
     return this._includes;
@@ -15,10 +22,33 @@ class TapeFile extends TapeStructure {
     return this._defs;
   }
   
-  constructor(includes: TapeStructure[], defs: (TapeStructure)[]) {
+  constructor(name: String, includes: TapeStructure[], defs: (TapeStructure)[]) {
     super();
+    this._name = name;
     this._includes = includes;
     this._defs = defs;
+  }
+
+  $$ReportError(): String {
+    return this.name;
+  }
+
+  $Build(parent: TapeStructure): TapeErrors {
+    let errors = TapeErrors.Empty(this);
+    
+    this.scope = new TapeScope(this, parent.scope);
+
+    for (let inc of this._includes) {
+      let err = inc.$Build(this);
+      errors.Map(err);
+    }
+
+    for (let def of this._defs) {
+      let err = def.$Build(this);
+      errors.Map(err);
+    }
+
+    return errors;
   }
 
   $Create(parentScope: TapeScope): (Boolean | String)[] {

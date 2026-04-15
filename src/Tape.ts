@@ -3,7 +3,7 @@ import { TapeValue } from './Core/Structure/TapeValue';
 import { TapeStatement } from './Core/Structure/TapeStatement';
 import { TapeExpression } from './Core/Structure/TapeExpression';
 import { TapeCode } from './Core/TapeCode';
-import { TapeProject } from './Core/TapeProject';
+import { TapeProject } from './Core/Structure/TapeProject';
 import { TapeType } from './Core/Structure/TapeType';
 import { TapeDefinition } from './Core/Structure/TapeDefinition';
 import { TapeFile } from './Core/Structure/TapeFile';
@@ -122,12 +122,12 @@ export function Include(name: String, path?: String): TapeInclude {
   return new TapeInclude(name, path);
 }
 
-export function File(includes: TapeStructure[], defs: (TapeStructure)[]): TapeFile {
-  return new TapeFile(includes, defs);
+export function File(name: String, includes: TapeStructure[], defs: (TapeStructure)[]): TapeFile {
+  return new TapeFile(name, includes, defs);
 }
 
-export function Project(files: TapeFile[]): TapeProject {
-  return new TapeProject(files);
+export function Project(name: String, files: TapeFile[]): TapeProject {
+  return new TapeProject(name, files);
 }
 
 export { TapeExpression as Expression };

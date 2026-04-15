@@ -7,8 +7,10 @@ import { TapeType } from './TapeType';
 import { TapeScope } from '../TapeScope';
 import { TapeStructure } from '../TapeStructure';
 import { TapeAccess } from '../Interfaces/TapeAccess';
+import { TapeErrors } from '../TapeErrors';
+import { TapeErrorReporter } from '../Interfaces/TapeErrorReporter';
 
-abstract class TapeDefinition extends TapeStructure {
+abstract class TapeDefinition extends TapeStructure implements TapeErrorReporter {
   private _name: String;
   public get name(): String {
     return this._name;
@@ -17,6 +19,10 @@ abstract class TapeDefinition extends TapeStructure {
   constructor(name: String) {
     super();
     this._name = name;
+  }
+  
+  $$ReportError(): String {
+    return this.name;
   }
 
   abstract $Generate(generator: TapeGenerator) : TapeCode;
@@ -54,9 +60,24 @@ namespace TapeDefinition {
       return generator.Variable(this);
     }
 
+    $Build(parent: TapeStructure): TapeErrors {
+      let errors = TapeErrors.Empty(this);
+
+      if (errors.Map(!parent.scope.Exists(this.name) || `Variable name '${this.name}' already defined.`)) return errors;
+
+      parent.scope.Add(this);
+
+      let err = this._type.$Build(this);
+      if (errors.Map(err)) return errors;
+
+      this.scope = this._type.scope;
+
+      return errors;
+    }
+
     $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
-        !parentScope.Exists(this.name) || `Variable name ${this.name} already defined.`,
+        !parentScope.Exists(this.name) || `Variable name '${this.name}' already defined.`,
       ];
 
       parentScope.Add(this);
@@ -68,7 +89,7 @@ namespace TapeDefinition {
     }
   }
 
-  export class CustomType extends TapeDefinition {
+  export class CustomType extends TapeDefinition  {
     private _items: CustomType.Item[];
     public get items(): ReadonlyArray<CustomType.Item> {
       return this._items;
@@ -79,9 +100,25 @@ namespace TapeDefinition {
       this._items = items;
     }
 
+    $Build(parent: TapeStructure): TapeErrors {
+      let errors = TapeErrors.Empty(this);
+
+      if (errors.Map(!parent.scope.Exists(this.name) || `CustomType name '${this.name}' already defined.`)) return errors;
+
+      parent.scope.Add(this);
+      this.scope = new TapeScope(this);
+
+      for (let item of this._items) {
+        let err = item.$Build(this);
+        errors.Map(err);
+      }
+
+      return errors;
+    }
+
     $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
-        !parentScope.Exists(this.name) || `CustomType name ${this.name} already defined.`,
+        !parentScope.Exists(this.name) || `CustomType name '${this.name}' already defined.`,
       ];
 
       parentScope.Add(this);
@@ -141,6 +178,30 @@ namespace TapeDefinition {
       return this as T;
     }
 
+    $Build(parent: TapeStructure): TapeErrors {
+      let errors = TapeErrors.Empty(this);
+
+      if (errors.Map(!parent.scope.Exists(this.name) || `Function name '${this.name}' already defined.`)) return errors;
+
+      parent.scope.Add(this);
+      this.scope = new TapeScope(this, parent.scope);
+
+      var err: TapeErrors;
+
+      err = this._returnType.$Build(this);
+      if (errors.Map(err)) return errors;
+
+      for (let arg of this._arguments) {
+        err = arg.$Build(this);
+        if (errors.Map(err)) return errors;
+      }
+
+      err = this.content.$Build(this);
+      if (errors.Map(err)) return errors;
+
+      return errors;
+    }
+
     $Create(parentScope: TapeScope): (Boolean | String)[] {
       let errors: (Boolean | String)[] = [
         !parentScope.Exists(this.name) || `Function name ${this.name} already defined.`,
@@ -180,6 +241,23 @@ namespace TapeDefinition {
         return this;
       }
       
+      $Build(parent: TapeStructure): TapeErrors {
+        let errors = TapeErrors.Empty(this);
+
+        if (errors.Map(!parent.scope.Exists(this.name) || `Argument name '${this.name}' already defined.`)) return errors;
+  
+        parent.scope.Add(this);
+  
+        var err: TapeErrors;
+  
+        err = this._type.$Build(this);
+        if (errors.Map(err)) return errors;
+  
+        this.scope = this._type.scope;
+
+        return errors;
+      }
+
       $Create(parentScope: TapeScope): (Boolean | String)[] {
         this._type.$Create(parentScope);
         this.scope = this._type.scope;
@@ -218,7 +296,7 @@ namespace TapeDefinition {
       this._parent = parent;
     }
 
-    Access(name: String): TapeDefinition {
+    $$Access(name: String): TapeDefinition {
       let foundField = this._fields.filter(t => t.name == name)[0];
       let foundMethod = this._methods.filter(t => t.name == name)[0];
       return foundField ?? foundMethod;

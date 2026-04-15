@@ -42,17 +42,17 @@ let Function_Main = Tape.Function('main', Tape.Type.Primitive.Void)
   
   ]);
 
-let mainFile = Tape.File([
+let mainFile = Tape.File('MainFile', [
   ],[
   
   Struct_Motor,
   Struct_Loop_Instance,
 
-  Function_Loop,
-  Function_Main
+  // Function_Loop,
+  // Function_Main
 ]);
 
-let prj = Tape.Project([
+let prj = Tape.Project('MainProject', [
   mainFile
 ]);
 
@@ -79,6 +79,9 @@ let prj = Tape.Project([
 // console.log(genOutPY_Source);
 // console.log('\n');
 // fs.promises.mkdir(path.dirname(path.join(__dirname, 'build', 'main.py')), {recursive: true}).then(x => fs.promises.writeFile(path.join(__dirname, 'build', 'main.py'), genOutPY_Source as string))
+
+let errors = prj.Build();
+console.log(errors.Print());
 
 let genC = new GeneratorC();
 let genOutC = mainFile.$Generate(genC);

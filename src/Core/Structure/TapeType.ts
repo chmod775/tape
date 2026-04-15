@@ -4,6 +4,8 @@ import { TapeStructure } from '../TapeStructure';
 import { TapeScope } from '../TapeScope';
 import { TapeValue } from './TapeValue';
 import { TapeDefinition } from './TapeDefinition';
+import { TapeErrors } from '../TapeErrors';
+import { TapeErrorReporter } from '../Interfaces/TapeErrorReporter';
 
 abstract class TapeType extends TapeStructure {
 }
@@ -25,7 +27,7 @@ namespace TapeType {
     String
   }
   
-  export class Primitive extends TapeType {
+  export class Primitive extends TapeType implements TapeErrorReporter {
     private _code: _PrimitiveCodes;
     public get code(): _PrimitiveCodes {
       return this._code;
@@ -35,7 +37,17 @@ namespace TapeType {
       super();
       this._code = code;
     }
+
+    $$ReportError(): String {
+      return this.code.toString();
+    }
   
+    $Build(parent: TapeStructure): TapeErrors {
+      let errors = TapeErrors.Empty(this);
+      this.scope = parent.scope;
+      return errors;
+    }
+
     $Generate(generator: TapeGenerator): TapeCode {
       return generator.Type_Primitive(this);
     }
@@ -73,7 +85,7 @@ namespace TapeType {
     }
   }
 
-  export class Custom extends TapeType {
+  export class Custom extends TapeType implements TapeErrorReporter {
     private _def: TapeDefinition.CustomType;
     public get def(): TapeDefinition.CustomType {
       return this._def;
@@ -83,7 +95,17 @@ namespace TapeType {
       super();
       this._def = def;
     }
+
+    $$ReportError(): String {
+      return this.def.name;
+    }
   
+    $Build(parent: TapeStructure): TapeErrors {
+      let errors = TapeErrors.Empty(this);
+      this.scope = this._def.scope;
+      return errors;
+    }
+
     $Create(parentScope: TapeScope): (Boolean | String)[] {
       this.scope = this._def.scope;
       return this.$Validate();

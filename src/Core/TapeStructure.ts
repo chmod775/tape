@@ -1,6 +1,7 @@
 import { TapeCode } from "./TapeCode";
 import { TapeGenerator } from "./TapeGenerator";
 import { TapeScope } from "./TapeScope";
+import { TapeErrors } from "./TapeErrors";
 
 abstract class TapeStructure {
   private _scope?: TapeScope;
@@ -15,6 +16,8 @@ abstract class TapeStructure {
   $Validate(): (Boolean | String)[] {
     return [];
   }
+
+  abstract $Build(parent: TapeStructure): TapeErrors;
 
   $Create(parentScope: TapeScope): (Boolean | String)[] {
     this._scope = parentScope;
